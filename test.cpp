@@ -30,10 +30,18 @@ int main()
 
     Node* input=new Node("input");
 
+
+    auto x=Layer::create("Dense",
+                        "Dense")->set_config("activation","tanh")
+                                ->set_config("dims","4")
+                                ->set_input(input)
+                                ->get_output();
+
     auto l=Layer::create("Split",
-                         "Split-0")->set_config("num_split","3")
+                         "Split-0")->set_config("num_split","2")
                                    ->set_config("axis","1")
-                                   ->set_input(input);
+                                   ->set_input(x);
+
     auto y=l->get_output();
 
     vector<Node*> out;
@@ -49,7 +57,6 @@ int main()
     }
 
     cout<<l->configs["num_split"]<<endl;
-    exit(0);
 
 
     Net *net =new Net({input},out);
@@ -59,7 +66,7 @@ int main()
     for(int k=0;k<2;k++)
     {
         cout<<k<<"-th run:"<<endl;
-        net->feed({MatrixXf::Random(3,4)})->compute();
+        net->feed({MatrixXf::Random(2,2)})->compute();
         cout<<"input:"<<endl;
         cout<<input->data<<endl;
         for(int i=0;i<net->out_nodes.size();i++)

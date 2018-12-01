@@ -18,12 +18,12 @@ class Dense: public Layer{
             std::string activation;
 
             Eigen::MatrixXf weight;
-            Eigen::MatrixXf bias;
+            Eigen::VectorXf bias;
 
             void inference();
             
             std::vector<Node *> get_output();
 };
 
-REGISTER_LAYER(Dense,dimension activation)
+REGISTER_LAYER(Dense,dims activation)
 #endif
