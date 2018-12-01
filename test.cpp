@@ -4,6 +4,9 @@
 #include "layer.h"
 #include "net.h"
 
+#include <map>
+#include <string>
+
 using namespace std;
 using Eigen::MatrixXf;
 
@@ -13,16 +16,25 @@ vector<Node *> build(string name, Node* x)
     return Layer::create(name)->set_config("num_split","2")->set_input(x)->get_output();
 }
 
+void test(map<std::string,std::string> configs)
+{
+    ;
+}
 
 int main()
 {
+
+    std::map<std::string,std::string> configs;
+
+    test({{"v1","0"},{"v2","1"}});
+
     Node* input=new Node("input");
 
-    auto y=Layer::create("Split",
-                         "Split-0")->set_config("num_split","2")
+    auto l=Layer::create("Split",
+                         "Split-0")->set_config("num_split","3")
                                    ->set_config("axis","1")
-                                   ->set_input(input)
-                                   ->get_output();
+                                   ->set_input(input);
+    auto y=l->get_output();
 
     vector<Node*> out;
 
@@ -35,6 +47,9 @@ int main()
                                                      ->get_output();
         out.insert(out.end(),z.begin(),z.end());
     }
+
+    cout<<l->configs["num_split"]<<endl;
+    exit(0);
 
 
     Net *net =new Net({input},out);

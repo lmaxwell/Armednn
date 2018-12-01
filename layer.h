@@ -57,6 +57,14 @@ class Layer{
         std::vector<Node*> out_nodes;
 
         std::map<std::string,std::string> configs;
+
+        template <typename T>
+        T get_config(const std::string& name)
+        {
+            T value;
+            get_config(name,value);
+            return value;
+        }
         
         void get_config(const std::string& name, int& value);
         void get_config(const std::string& name, size_t& value);
