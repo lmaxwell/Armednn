@@ -24,6 +24,21 @@ void test(map<std::string,std::string> configs)
 int main()
 {
 
+
+
+    MatrixXf mat(2,2);
+    mat(0,0)=1;
+    mat(0,1)=2;
+    mat(1,0)=3;
+    mat(1,1)=4;
+    MatrixXf mat2=mat;
+    for(int i=0;i<4;i++)
+        cout<<mat.data()[i]<<endl;
+    cout<<mat.data()<<"\t"<<mat.array().data()<<"\t"<<mat2.data()<<endl;
+    for(int i=0;i<4;i++)
+        cout<<mat2.data()[i]<<endl;
+    exit(0);
+
     std::map<std::string,std::string> configs;
 
     test({{"v1","0"},{"v2","1"}});
