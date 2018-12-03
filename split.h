@@ -11,9 +11,10 @@
 
 class Split: public Layer{
     public:
-            Split()
+            Split(Config _config):Layer(_config)
             {
-                default_config("num_split",2);
+                set_num_input(1);
+                set_num_output(get_config("num_split"));
             }
 
             size_t axis;

@@ -34,21 +34,10 @@ Layer* Layer::set_config(const std::string name,const std::string value)
         exit(1);
     }
     else
-        configs[name]=value;
+        config.set(value);
     return this;
 }
 
-Layer* Layer::set_input(std::vector<Node*> inputs)
-{
-    in_nodes=inputs;
-    return this;
-}
-
-Layer* Layer::set_input(Node* input)
-{
-    in_nodes.push_back(input);
-    return this;
-}
 
 Layer* Layer::add_output()
 {

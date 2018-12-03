@@ -68,6 +68,9 @@ int main()
     Node* input=new Node("input");
 
 
+    Config *config= new Config();
+    config->set("activation","tanh");
+    config->set("dims",4);
     auto x=Layer::create("Dense",
                         "Dense")->set_config("activation","tanh")
                                 ->set_config("dims","4")

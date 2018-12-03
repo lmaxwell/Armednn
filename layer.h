@@ -11,6 +11,55 @@
 #include <iostream>
 
 
+template <typename T>
+class Value{
+    public:
+        Value(T _value):value(_value){}
+    private:
+        T _value:
+}
+
+class Config{
+    public:
+        Config()
+        set(std::string name)
+        get(std::string name)
+    private:
+        std::map<std::string,std::string> configs;
+}
+
+void Config::set(std::string name,std::string value)
+{
+    configs[name]=value;
+}
+
+void str2T(const std::string& name, int& value2)
+{
+        value2= atoi(value1.c_str());
+}
+void str2T(const std::string& name, size_t& value2)
+{
+        value2= atoi(value1.c_str());
+}
+void str2T(const std::string value1, float& value2)
+{
+        value2=atof(value1.c_str());
+}
+void str2T(const std::string value1, std::string& value2)
+{
+        value2=value1.c_str();
+}
+
+template <typename T>
+void Config::get(std::string name)
+{
+    T value;
+    str2T(configs[name],value);
+    return value;
+}
+
+
+
 class Layer;
 class LayerFactory
 {
@@ -23,6 +72,8 @@ class Layer{
     public:
 
         Layer(){mark=2;}
+
+        Layer(Config _config):config(_config){mark=2;}
 
         virtual void inference(){}
         
@@ -45,9 +96,7 @@ class Layer{
         template <typename T>
         T get_config(const std::string& name)
         {
-            T value;
-            get_config(name,value);
-            return value;
+            return config.get(name);
         }
         
         void get_config(const std::string& name, int& value);
@@ -58,9 +107,6 @@ class Layer{
 
         Layer* set_config(const std::string name,const std::string value);
         
-        Layer* set_input(std::vector<Node*> inputs);
-
-        Layer* set_input(Node* input);
 
         Layer* add_output();
         Layer* add_output(size_t channels);
@@ -106,6 +152,7 @@ class Layer{
         static std::map<std::string,LayerFactory*> factories;
         static std::map<std::string,std::set<std::string> > configs_type;
         size_t mark;
+        Config config;
 
 };
 
