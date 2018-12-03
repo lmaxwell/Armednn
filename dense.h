@@ -8,7 +8,6 @@
 #include <vector>
 #include <string>
 
-
 class Dense: public Layer{
     public:
             Dense()

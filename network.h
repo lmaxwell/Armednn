@@ -1,40 +1,40 @@
-#ifndef _Net_H_
-#define _Net_H_
+#ifndef _Network_H_
+#define _Network_H_
 #include "layer.h"
 
-class Net
+class Network
 {
     public:
 
-        Net(){
+        Network(){
             mark=0;
         }
 
-        Net(std::vector<Node *> _in_nodes,std::vector<Node *> _out_nodes){
+        Network(std::vector<Node *> _in_nodes,std::vector<Node *> _out_nodes){
             mark=0;
             bind(_in_nodes,_out_nodes);
         }
 
-        Net* input(std::vector<Node *> nodes)
+        Network* input(std::vector<Node *> nodes)
         {
             in_nodes=nodes;
             return this;
         }
 
-        Net* output(std::vector<Node *> nodes)
+        Network* output(std::vector<Node *> nodes)
         {
             out_nodes=nodes;
             return this;
         }
 
-        Net* bind(std::vector<Node *> _in_nodes,std::vector<Node *> _out_nodes)
+        Network* bind(std::vector<Node *> _in_nodes,std::vector<Node *> _out_nodes)
         {
             input(_in_nodes);
             output(_out_nodes);
             return this;
         }
 
-        Net* feed(const std::vector<Eigen::MatrixXf> &data)
+        Network* feed(const std::vector<Eigen::MatrixXf> &data)
         {
             for(int i=0;i<in_nodes.size();i++)
             {

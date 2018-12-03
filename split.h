@@ -13,6 +13,7 @@ class Split: public Layer{
     public:
             Split()
             {
+                default_config("num_split",2);
             }
 
             size_t axis;

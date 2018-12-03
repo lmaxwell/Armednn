@@ -2,13 +2,16 @@
 #include "split.h"
 //#include "node.h"
 #include "layer.h"
-#include "net.h"
+#include "network.h"
 
 #include <map>
 #include <string>
 
 using namespace std;
 using Eigen::MatrixXf;
+using Eigen::Map;
+using Eigen::Matrix;
+using namespace Eigen;
 
 
 vector<Node *> build(string name, Node* x)
@@ -24,6 +27,8 @@ void test(map<std::string,std::string> configs)
 int main()
 {
 
+    /*
+    MatrixXf *xf;
 
 
     MatrixXf mat(2,2);
@@ -37,11 +42,28 @@ int main()
     cout<<mat.data()<<"\t"<<mat.array().data()<<"\t"<<mat2.data()<<endl;
     for(int i=0;i<4;i++)
         cout<<mat2.data()[i]<<endl;
+    cout<<mat<<endl;
+    mat.row(0).array()*=mat2.row(0).array();
+    cout<<mat.row(0).array()<<endl;
+    cout<<mat<<endl;
+
+    typedef Matrix<float,Dynamic,Dynamic,RowMajor> RowMajMat; 
+    RowMajMat mat3(2,6);
+    mat3<<1,2,3,4,5,6,
+         7,8,9,10,11,12;
+    Map<RowMajMat> mat4(mat3.data(),6,2);
+    cout<<mat3<<endl;
+    cout<<mat4<<endl;
+    cout<<mat3.data()<<"\t"<<mat4.data()<<endl;
+
+    cout<<mat4.data()+3<<endl;
+    cout<<mat4.block(1,1,1,1).data()<<endl;
     exit(0);
 
     std::map<std::string,std::string> configs;
 
     test({{"v1","0"},{"v2","1"}});
+    */
 
     Node* input=new Node("input");
 
@@ -74,7 +96,7 @@ int main()
     cout<<l->configs["num_split"]<<endl;
 
 
-    Net *net =new Net({input},out);
+    Network *net =new Network({input},out);
     //net->bind({input},out);
     net->print();
 

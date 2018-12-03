@@ -1,32 +1,10 @@
 #include "layer.h"
-//initialize layer index
-size_t Layer::index=0;
 //initialize factories
 std::map<std::string,LayerFactory*> Layer::factories;
 //initialize configs
 std::map<std::string,std::set<std::string> > Layer::configs_type;
 
 
-Layer::Layer(std::vector<Node*> inputs,std::string _name)
-{
-    in_nodes=inputs;
-    if(_name=="")
-        name=std::to_string(index)+"-layer";
-    else
-        name=_name;
-    index+=1;
-}
-
-
-Layer::Layer(Node* input,std::string _name)
-{
-    in_nodes.push_back(input);
-    if(_name=="")
-        name=std::to_string(index)+"-layer";
-    else
-        name=_name;
-    index+=1;
-}
 
 void Layer::get_config(const std::string& name, int& value)
 {

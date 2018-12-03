@@ -23,36 +23,20 @@ class Layer{
     public:
 
         Layer(){mark=2;}
-        Layer(std::vector<Node*> inputs):in_nodes(inputs){}
-
-        Layer(Node* input)
-        {
-            in_nodes.push_back(input);
-        }
-
-        Layer(std::vector<Node*> inputs,std::string _name);
-
-
-        Layer(Node* input,std::string _name);
-
-        //index of layer
-        static size_t index;
 
         virtual void inference(){}
         
         virtual ~Layer(){}
-        //dimension of vector of input data
-        size_t input_channels;
-        //dimension of vector of output data
-        size_t output_channels;
-        //parameter size
-        size_t parameter_size;
+
         //type of the layer;
         std::string type;
+
         //name of the layer
         std::string name;
+
         //input nodes of the layer
         std::vector<Node*> in_nodes;
+
         //output nodes of the layer
         std::vector<Node*> out_nodes;
 
