@@ -3,18 +3,19 @@
 #define _SPLIT_H_
 
 
-#include "layer.h"
-#include "node.h"
+#include "tsnn/layer.h"
 #include <vector>
 #include <string>
+#include <iostream>
 
 
 class Split: public Layer{
+
     public:
-            Split(Config _config):Layer(_config)
+            Split(Config config,std::string name):Layer(config,name)
             {
                 set_num_input(1);
-                set_num_output(get_config("num_split"));
+                set_num_output(get_config<size_t>("num_split"));
             }
 
             size_t axis;
@@ -22,7 +23,6 @@ class Split: public Layer{
 
             void inference();
             
-            std::vector<Node *> get_output();
 };
 
 REGISTER_LAYER(Split,num_split axis)

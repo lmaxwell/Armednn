@@ -1,6 +1,6 @@
 #ifndef _Network_H_
 #define _Network_H_
-#include "layer.h"
+#include "tsnn/layer.h"
 
 class Network
 {
@@ -59,9 +59,9 @@ class Network
                 return;
             }
 
-            for(int i=0;i<in_nodes.size();i++)
+            for(int i=0;i<from->get_input().size();i++)
             {
-                compute_node(from->in_nodes[i]);
+                compute_node(from->get_input()[i]);
             }
 
             from->inference();
@@ -85,19 +85,19 @@ class Network
             std::vector<Node*>::iterator ite=std::find(in_nodes.begin(),in_nodes.end(),node);
 
             if (ite!=in_nodes.end()) 
-                return ;
+                return;
 
             Layer* from=node->from;
 
             if(layers.find(from)!=layers.end()) 
             {
-                return ;
+                return;
             }
 
             layers.insert(from);
-            for(int i=0;i<in_nodes.size();i++)
+            for(int i=0;i<from->get_input().size();i++)
             {
-                iterate_layers(from->in_nodes[i]);
+                iterate_layers(from->get_input()[i]);
             }
         }
 
@@ -114,17 +114,17 @@ class Network
             {
                 std::string temp=(*it)->name;
                 temp+="\t{ ";
-                for(int i=0;i<(*it)->out_nodes.size();i++)
+                for(int i=0;i<(*it)->get_output().size();i++)
                 {
-                    temp+=(*it)->out_nodes[i]->name;
-                    if(i!=(*it)->out_nodes.size()-1)
+                    temp+=(*it)->get_output()[i]->name;
+                    if(i!=(*it)->get_output().size()-1)
                         temp+=" ";
                 }
                 temp+=" }\t{ ";
-                for(int i=0;i<(*it)->in_nodes.size();i++)
+                for(int i=0;i<(*it)->get_input().size();i++)
                 {
-                    temp+=(*it)->in_nodes[i]->name;
-                    if(i!=(*it)->in_nodes.size()-1)
+                    temp+=(*it)->get_input()[i]->name;
+                    if(i!=(*it)->get_input().size()-1)
                         temp+=" ";
                 }
                 temp+=" }";

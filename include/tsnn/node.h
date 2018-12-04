@@ -1,7 +1,7 @@
 #ifndef _Node_H
 #define _Node_H
 
-#include "core.h"
+#include "tsnn/core.h"
 #include <string>
 
 class Layer;
