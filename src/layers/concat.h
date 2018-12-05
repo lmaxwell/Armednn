@@ -14,7 +14,7 @@ class Concat: public Layer{
             Concat(Config config,std::string name):Layer(config,name)
             {
                 set_num_input(get_config<size_t>("num_input"));
-                set_num_output(1);
+                set_num_output<Matrix>(1);
             }
 
             void inference();

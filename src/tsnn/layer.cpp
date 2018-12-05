@@ -93,31 +93,28 @@ Layer* Layer::set_config(const std::string name,const std::string value)
     return this;
 }
 
-Layer* Layer::set_input(std::vector<Data*> inputs)
+Layer* Layer::set_input(std::vector<pData> inputs)
 {
     in_nodes=inputs;
     return this;
 }
 
-Layer* Layer::set_input(Data* input)
+Layer* Layer::set_input(pData input)
 {
     in_nodes.push_back(input);
     return this;
 }
 
 
+template <typename T>
 Layer* Layer::add_output()
 {
-    Data *node=new Data();
+    pData node=new Data<T>();
     node->from=this;
     node->name=name+"["+std::to_string(out_nodes.size())+"]";
     out_nodes.push_back(node);
 }
 
-Layer* Layer::add_output(size_t channels)
-{
-    Data *node=new Data(channels);
-    node->from=this;
-    node->name=name+"["+std::to_string(out_nodes.size())+"]";
-    out_nodes.push_back(node);
-}
+template Layer* Layer::add_output<std::string>();
+template Layer* Layer::add_output<Matrix>();
+

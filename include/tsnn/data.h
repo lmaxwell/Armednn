@@ -3,35 +3,78 @@
 
 #include "tsnn/core.h"
 #include <string>
+typedef std::string string;
 
 class Layer;
 
-class Data
+class Data_
+{
+    public:
+        virtual void set_value(int){};
+        virtual const int& get_(int&){};
+
+        virtual void set_value(string){};
+        virtual const string& get_(string&){};
+
+        virtual void set_value(Matrix){};
+        virtual const Matrix& get_(Matrix&){};
+
+
+        template <typename T>
+        const T& get_value() 
+        {
+            T _;
+            return get_(_);
+        }
+
+        std::string name;
+        Layer* from;
+        Layer* to;
+        size_t mark;
+
+    protected:
+        Data_(){mark=2;};
+        Data_(string _name):name(_name){mark=2;};
+
+};
+
+typedef Data_* pData;
+
+template <typename T>
+class Data:public Data_
+{
+    public:
+        Data():Data_(){};
+        Data(string name):Data_(name){};
+
+        void set_value(T _value)
+        {
+            value=_value;
+        }
+        
+        T get_value()
+        {
+            return value;
+        }
+
+
+        const T& get_(T& _value)
+        {
+            return value;
+        }
+        
+    private:
+        T value;
+};
+
+template <typename T>
+class InputData:public Data<T>
 {
     public:
 
-        Data(){mark=2;}
-        Data(size_t _channels):channels(_channels){mark=2;}
-        Data(std::string _name):name(_name){mark=2;}
-        Data(std::string _name,size_t _channels):name(_name),channels(_channels){mark=2;}
-
-        //name of the node
-        std::string name;
-
-        //name of the layer which this node is from
-        Layer* from;
-
-        //name of the layer which this node point to, not used now
-        Layer* to;
-
-        //data of the node
-        Eigen::MatrixXf data;
-
-        size_t channels;
-        size_t length;
-
-        size_t get_channels(){return data.cols();}
-        size_t get_length(){return data.rows();}
-        size_t mark;
+        InputData():Data<T>(){};
+        InputData(string name):Data<T>(name){};
+    ;
 };
+
 #endif

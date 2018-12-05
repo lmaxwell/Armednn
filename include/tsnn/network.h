@@ -10,24 +10,24 @@ class Network
             mark=0;
         }
 
-        Network(std::vector<Data *> _in_nodes,std::vector<Data *> _out_nodes){
+        Network(std::vector<pData> _in_nodes,std::vector<pData> _out_nodes){
             mark=0;
             bind(_in_nodes,_out_nodes);
         }
 
-        Network* input(std::vector<Data *> nodes)
+        Network* input(std::vector<pData> nodes)
         {
             in_nodes=nodes;
             return this;
         }
 
-        Network* output(std::vector<Data *> nodes)
+        Network* output(std::vector<pData> nodes)
         {
             out_nodes=nodes;
             return this;
         }
 
-        Network* bind(std::vector<Data *> _in_nodes,std::vector<Data *> _out_nodes)
+        Network* bind(std::vector<pData> _in_nodes,std::vector<pData> _out_nodes)
         {
             input(_in_nodes);
             output(_out_nodes);
@@ -38,16 +38,16 @@ class Network
         {
             for(int i=0;i<in_nodes.size();i++)
             {
-                in_nodes[i]->data=data[i];
+                in_nodes[i]->set_value(data[i]);
             }
             return this;
         }
 
-        void compute_node(Data* node)
+        void compute_node(pData node)
         {
 
 
-            std::vector<Data*>::iterator ite=std::find(in_nodes.begin(),in_nodes.end(),node);
+            std::vector<pData>::iterator ite=std::find(in_nodes.begin(),in_nodes.end(),node);
 
             if (ite!=in_nodes.end()) //this node is input node
                 return;
@@ -80,9 +80,9 @@ class Network
         }
 
 
-        void iterate_layers(Data *node)
+        void iterate_layers(pData node)
         {
-            std::vector<Data*>::iterator ite=std::find(in_nodes.begin(),in_nodes.end(),node);
+            std::vector<pData>::iterator ite=std::find(in_nodes.begin(),in_nodes.end(),node);
 
             if (ite!=in_nodes.end()) 
                 return;
@@ -143,8 +143,8 @@ class Network
 
         size_t mark;
 
-        std::vector<Data *>in_nodes;
-        std::vector<Data *>out_nodes;
+        std::vector<pData>in_nodes;
+        std::vector<pData>out_nodes;
         std::set<Layer *>layers;
 
 };

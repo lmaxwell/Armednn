@@ -41,21 +41,22 @@ class Layer{
         std::string name;
 
 
-
         void set_num_input(size_t num)
         {
             num_input=num;
         }
+
+        template <typename T>
         void set_num_output(size_t num)
         {
             for(int i=0;i<num;i++)
-                add_output();
+                add_output<T>();
             num_output=num;
         }
 
-        Layer* set_input(std::vector<Data*> inputs);
+        Layer* set_input(std::vector<pData> inputs);
 
-        Layer* set_input(Data* input);
+        Layer* set_input(pData input);
 
         template <typename T>
         T get_config(const std::string& name);
@@ -65,8 +66,8 @@ class Layer{
         Layer* set_config(const std::string name,const std::string value);
         
 
-        std::vector<Data*> get_output(){return out_nodes;};
-        std::vector<Data*> get_input(){return in_nodes;};
+        std::vector<pData> get_output(){return out_nodes;};
+        std::vector<pData> get_input(){return in_nodes;};
 
         static void register_config(const std::string& layer_name, const std::string& config_names);
         static void register_layer(const std::string& name, LayerFactory *factory);
@@ -81,12 +82,12 @@ class Layer{
         size_t num_input;
         size_t num_output;
         //input nodes of the layer
-        std::vector<Data*> in_nodes;
+        std::vector<pData> in_nodes;
         //output nodes of the layer
-        std::vector<Data*> out_nodes;
+        std::vector<pData> out_nodes;
 
+        template <typename T>
         Layer* add_output();
-        Layer* add_output(size_t channels);
 };
 
 #define FORCE_LINK_THIS(x) int force_link_##x = 0;

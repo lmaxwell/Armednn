@@ -4,10 +4,16 @@
 
 void Split::inference()
 {
-    size_t length=get_input()[0]->get_length();
-    size_t channels=get_input()[0]->get_channels();
+    Matrix input_mat=get_input()[0]->get_value<Matrix>();
+    size_t length=input_mat.rows();
+    size_t channels=input_mat.cols();
+
     size_t num_split=get_config<size_t>("num_split");
+
     size_t out_channels=size_t(channels/num_split);
+
+
     for(int i=0;i<num_split;i++)
-        get_output()[i]->data=get_input()[0]->data.block(0,out_channels*i,length,out_channels);
+        get_output()[i]->set_value(input_mat.block(0,out_channels*i,length,out_channels));
+
 }

@@ -7,7 +7,6 @@
 using namespace std;
 using Eigen::MatrixXf;
 using Eigen::Map;
-using Eigen::Matrix;
 
 
 
@@ -57,8 +56,7 @@ int main()
 
     //std::cout<<"here"<<Layer::factories().size()<<std::endl;
     
-    Data* input=new Data("input");
-
+    pData input=new Data<Matrix>("input");
 
     Config *config= new Config();
     
@@ -89,7 +87,7 @@ int main()
                                   ->get_output();
 
 
-    vector<Data*> out;
+    vector<pData> out;
 
     for(int i=0;i<y2.size();i++)
     {
@@ -113,11 +111,11 @@ int main()
         cout<<k<<"-th run:"<<endl;
         net->feed({MatrixXf::Random(2,6)})->compute();
         cout<<"input:"<<endl;
-        cout<<input->data<<endl;
+        cout<<input->get_value<Matrix>()<<endl;
         for(int i=0;i<net->out_nodes.size();i++)
         {
             cout<<i<<"-th output:"<<net->out_nodes[i]->name<<endl;
-            cout<<net->out_nodes[i]->data<<endl;
+            cout<<net->out_nodes[i]->get_value<Matrix>()<<endl;
         }
     }
 }

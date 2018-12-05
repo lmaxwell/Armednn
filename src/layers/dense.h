@@ -29,7 +29,7 @@ class Dense: public Layer{
             Dense(Config config,std::string name):Layer(config,name)
             {
                 set_num_input(1);
-                set_num_output(1);
+                set_num_output<Matrix>(1);
                 //define parameter
             }
 

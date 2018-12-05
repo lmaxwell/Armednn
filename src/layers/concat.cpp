@@ -5,20 +5,23 @@
 
 void Concat::inference()
 {
-    size_t rows=get_input()[0]->data.rows();
+
+    size_t rows=get_input()[0]->get_value<Matrix>().rows();
     size_t cols=0;
 
     for(int i=0;i<get_input().size();i++)
     {
-        cols+=get_input()[i]->data.cols();
+        cols+=get_input()[i]->get_value<Matrix>().cols();
     }
 
     Eigen::MatrixXf D(rows,cols);
+
     cols=0;
     for(int i=0;i<get_input().size();i++)
     {
-        D.block(0,cols,get_input()[i]->data.rows(),get_input()[i]->data.cols())=get_input()[i]->data;
-        cols+=get_input()[i]->data.cols();
+        D.block(0,cols,rows,get_input()[i]->get_value<Matrix>().cols())=get_input()[i]->get_value<Matrix>();
+        cols+=get_input()[i]->get_value<Matrix>().cols();
     }
-    get_output()[0]->data=D;
+
+    get_output()[0]->set_value(D);
 }

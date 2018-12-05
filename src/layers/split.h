@@ -15,7 +15,7 @@ class Split: public Layer{
             Split(Config config,std::string name):Layer(config,name)
             {
                 set_num_input(1);
-                set_num_output(get_config<size_t>("num_split"));
+                set_num_output<Matrix>(get_config<size_t>("num_split"));
             }
 
             size_t axis;
