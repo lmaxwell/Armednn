@@ -10,24 +10,24 @@ class Network
             mark=0;
         }
 
-        Network(std::vector<Node *> _in_nodes,std::vector<Node *> _out_nodes){
+        Network(std::vector<Data *> _in_nodes,std::vector<Data *> _out_nodes){
             mark=0;
             bind(_in_nodes,_out_nodes);
         }
 
-        Network* input(std::vector<Node *> nodes)
+        Network* input(std::vector<Data *> nodes)
         {
             in_nodes=nodes;
             return this;
         }
 
-        Network* output(std::vector<Node *> nodes)
+        Network* output(std::vector<Data *> nodes)
         {
             out_nodes=nodes;
             return this;
         }
 
-        Network* bind(std::vector<Node *> _in_nodes,std::vector<Node *> _out_nodes)
+        Network* bind(std::vector<Data *> _in_nodes,std::vector<Data *> _out_nodes)
         {
             input(_in_nodes);
             output(_out_nodes);
@@ -43,11 +43,11 @@ class Network
             return this;
         }
 
-        void compute_node(Node* node)
+        void compute_node(Data* node)
         {
 
 
-            std::vector<Node*>::iterator ite=std::find(in_nodes.begin(),in_nodes.end(),node);
+            std::vector<Data*>::iterator ite=std::find(in_nodes.begin(),in_nodes.end(),node);
 
             if (ite!=in_nodes.end()) //this node is input node
                 return;
@@ -80,9 +80,9 @@ class Network
         }
 
 
-        void iterate_layers(Node *node)
+        void iterate_layers(Data *node)
         {
-            std::vector<Node*>::iterator ite=std::find(in_nodes.begin(),in_nodes.end(),node);
+            std::vector<Data*>::iterator ite=std::find(in_nodes.begin(),in_nodes.end(),node);
 
             if (ite!=in_nodes.end()) 
                 return;
@@ -143,8 +143,8 @@ class Network
 
         size_t mark;
 
-        std::vector<Node *>in_nodes;
-        std::vector<Node *>out_nodes;
+        std::vector<Data *>in_nodes;
+        std::vector<Data *>out_nodes;
         std::set<Layer *>layers;
 
 };

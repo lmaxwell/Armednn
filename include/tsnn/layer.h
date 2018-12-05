@@ -9,7 +9,7 @@
 #include <sstream>
 #include <iostream>
 
-#include "tsnn/node.h"
+#include "tsnn/data.h"
 #include "tsnn/config.h"
 
 
@@ -53,9 +53,9 @@ class Layer{
             num_output=num;
         }
 
-        Layer* set_input(std::vector<Node*> inputs);
+        Layer* set_input(std::vector<Data*> inputs);
 
-        Layer* set_input(Node* input);
+        Layer* set_input(Data* input);
 
         template <typename T>
         T get_config(const std::string& name);
@@ -65,8 +65,8 @@ class Layer{
         Layer* set_config(const std::string name,const std::string value);
         
 
-        std::vector<Node*> get_output(){return out_nodes;};
-        std::vector<Node*> get_input(){return in_nodes;};
+        std::vector<Data*> get_output(){return out_nodes;};
+        std::vector<Data*> get_input(){return in_nodes;};
 
         static void register_config(const std::string& layer_name, const std::string& config_names);
         static void register_layer(const std::string& name, LayerFactory *factory);
@@ -81,9 +81,9 @@ class Layer{
         size_t num_input;
         size_t num_output;
         //input nodes of the layer
-        std::vector<Node*> in_nodes;
+        std::vector<Data*> in_nodes;
         //output nodes of the layer
-        std::vector<Node*> out_nodes;
+        std::vector<Data*> out_nodes;
 
         Layer* add_output();
         Layer* add_output(size_t channels);

@@ -1,19 +1,19 @@
-#ifndef _Node_H
-#define _Node_H
+#ifndef _Data_H
+#define _Data_H
 
 #include "tsnn/core.h"
 #include <string>
 
 class Layer;
 
-class Node
+class Data
 {
     public:
 
-        Node(){mark=2;}
-        Node(size_t _channels):channels(_channels){mark=2;}
-        Node(std::string _name):name(_name){mark=2;}
-        Node(std::string _name,size_t _channels):name(_name),channels(_channels){mark=2;}
+        Data(){mark=2;}
+        Data(size_t _channels):channels(_channels){mark=2;}
+        Data(std::string _name):name(_name){mark=2;}
+        Data(std::string _name,size_t _channels):name(_name),channels(_channels){mark=2;}
 
         //name of the node
         std::string name;

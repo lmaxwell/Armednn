@@ -93,13 +93,13 @@ Layer* Layer::set_config(const std::string name,const std::string value)
     return this;
 }
 
-Layer* Layer::set_input(std::vector<Node*> inputs)
+Layer* Layer::set_input(std::vector<Data*> inputs)
 {
     in_nodes=inputs;
     return this;
 }
 
-Layer* Layer::set_input(Node* input)
+Layer* Layer::set_input(Data* input)
 {
     in_nodes.push_back(input);
     return this;
@@ -108,7 +108,7 @@ Layer* Layer::set_input(Node* input)
 
 Layer* Layer::add_output()
 {
-    Node *node=new Node();
+    Data *node=new Data();
     node->from=this;
     node->name=name+"["+std::to_string(out_nodes.size())+"]";
     out_nodes.push_back(node);
@@ -116,7 +116,7 @@ Layer* Layer::add_output()
 
 Layer* Layer::add_output(size_t channels)
 {
-    Node *node=new Node(channels);
+    Data *node=new Data(channels);
     node->from=this;
     node->name=name+"["+std::to_string(out_nodes.size())+"]";
     out_nodes.push_back(node);

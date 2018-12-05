@@ -1,8 +1,10 @@
-#include <iostream>
+#include "app.h"
+
 #include "tsnn/tsnn.h"
 
 #include <map>
 #include <string>
+
 
 using namespace std;
 using Eigen::MatrixXf;
@@ -10,11 +12,8 @@ using Eigen::Map;
 using Eigen::Matrix;
 
 
-
-
-int main()
+void App::run()
 {
-
     /*
     Layer* layer=new Layer();
     return 1;
@@ -57,7 +56,7 @@ int main()
 
     //std::cout<<"here"<<Layer::factories().size()<<std::endl;
     
-    Data* input=new Data("input");
+    Node* input=new Node("input");
 
 
     Config *config= new Config();
@@ -89,7 +88,7 @@ int main()
                                   ->get_output();
 
 
-    vector<Data*> out;
+    vector<Node*> out;
 
     for(int i=0;i<y2.size();i++)
     {
