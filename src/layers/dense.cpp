@@ -4,9 +4,15 @@
 
 void Dense::inference()
 {
-    size_t dims=get_config<size_t>("dims");
+    //size_t dims=get_config<size_t>("dims");
+
+    Matrix& weight=get_param("weight");
+    Eigen::VectorXf bias=Eigen::Map<Eigen::VectorXf>(get_param("bias").data(),get_param("bias").cols());
+
+    /*
     weight=Eigen::MatrixXf::Identity(dims,dims);
     bias=Eigen::VectorXf::Zero(dims);
+    */
 
 
     /*
@@ -26,12 +32,12 @@ void Dense::inference()
     //std::cout<<"return side:"<<&(get_input()[0]->get_value<Matrix>())<<" "<<&in_mat<<std::endl;   
 
     Matrix& mat=get_output()[0]->get_value<Matrix>(); 
-    mat.resize(in_mat.rows(),dims); // use resize() to reallocate memory
+    mat.resize(in_mat.rows(),get_config<size_t>("dim1")); // use resize() to reallocate memory
 
     //mat.setZero(); //need to do this in some cases
 
     mat.noalias()=in_mat*weight;
-    mat.rowwise()+=bias.transpose();
+    mat.rowwise()+=bias.transpose();//.transpose();
     // onlly one allocate
 
 }

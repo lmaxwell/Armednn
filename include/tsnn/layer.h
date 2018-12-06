@@ -14,6 +14,41 @@
 
 
 
+class Param
+{
+    public:
+        Param(){};
+
+        Param(std::string _name,size_t _rows,size_t _cols):name(_name),rows(_rows),cols(_cols){};
+
+        std::string name;
+        size_t rows;
+        size_t cols;
+
+        Matrix value;
+
+        void load(Matrix _value)
+        {
+            if(_value.rows()==rows && _value.cols()==cols)
+            {
+                value=_value;
+            }
+            else
+            {
+                std::cout<<"wrong dimention"<<std::endl;
+            }
+
+        }
+
+        void load( float *p)
+        {
+            value=Eigen::Map<Matrix>(p,rows,cols);
+        }
+
+};
+
+typedef  std::map<std::string,Param> Params;
+
 
 class Layer;
 class LayerFactory
@@ -27,6 +62,9 @@ class Layer{
         Layer(){mark=2;}
 
         Layer(Config _config,std::string _name):config(_config),name(_name){mark=2;}
+
+        void add_param(std::string name, size_t rows, size_t cols);
+
 
     public:
         
@@ -59,26 +97,38 @@ class Layer{
         Layer* set_input(pData input);
 
         template <typename T>
+
         T get_config(const std::string& name);
-
-        
-
         Layer* set_config(const std::string name,const std::string value);
         
 
+
         std::vector<pData> get_output(){return out_nodes;};
         std::vector<pData> get_input(){return in_nodes;};
+
 
         static void register_config(const std::string& layer_name, const std::string& config_names);
         static void register_layer(const std::string& name, LayerFactory *factory);
 
         static Layer* create(const std::string &type, const Config _config, const std::string &name);
 
+        Layer* load_param( std::string name,  Matrix value);
 
+        Layer* load_param( std::string name, float* value);
+
+        Matrix& get_param(std::string name)
+        {
+            return param[name].value;
+        }
+        
         size_t mark;
+
 
     private:
         Config config;
+
+        Params param;
+
         size_t num_input;
         size_t num_output;
         //input nodes of the layer
@@ -88,6 +138,8 @@ class Layer{
 
         template <typename T>
         Layer* add_output();
+
+
 };
 
 #define FORCE_LINK_THIS(x) int force_link_##x = 0;

@@ -61,11 +61,15 @@ int main()
     Config *config= new Config();
     
     config->set("activation","tanh");
-    config->set("dims","6");
-    auto x=Layer::create("Dense",
+    config->set("dim0","6");
+    config->set("dim1","6");
+    auto d=Layer::create("Dense",
                          *config,
-                        "Dense")->set_input(input)
-                                ->get_output();
+                        "Dense")->set_input(input);
+    d->load_param("weight",Matrix::Identity(6,6));
+    d->load_param("bias",Matrix::Zero(1,6));
+    auto x=d->get_output();
+    cout<<x.size()<<endl;
     
 
     config= new Config();

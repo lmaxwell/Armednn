@@ -9,5 +9,5 @@ all: $(OBJS)
 %.o:%.cpp
 	g++ -c  -std=c++11 -Iinclude -Ithird_party/eigen $< -o $@
 clean:
-	rm -f src/*.o
+	rm -f src/examples/*.o
 

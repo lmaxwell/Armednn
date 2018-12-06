@@ -115,6 +115,24 @@ Layer* Layer::add_output()
     out_nodes.push_back(node);
 }
 
+void Layer::add_param( std::string name,size_t rows,size_t cols)
+{
+    param[name]=Param(name,rows,cols);
+}
+
+Layer* Layer::load_param( std::string name,  Matrix value)
+{
+    param[name].load(value);
+    return this;
+}
+
+Layer* Layer::load_param( std::string name, float* value)
+{
+    param[name].load(value);
+    return this;
+}
+
+
 template Layer* Layer::add_output<std::string>();
 template Layer* Layer::add_output<Matrix>();
 
