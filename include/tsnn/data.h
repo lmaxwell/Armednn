@@ -1,6 +1,7 @@
 #ifndef _Data_H
 #define _Data_H
 
+#include <iostream>
 #include "tsnn/core.h"
 #include <string>
 typedef std::string string;
@@ -11,19 +12,22 @@ class Data_
 {
     public:
         virtual void set_value(int){};
-        virtual const int& get_(int&){};
+        virtual  int& get_(int&){};
 
         virtual void set_value(string){};
-        virtual const string& get_(string&){};
+        virtual  string& get_(string&){};
 
         virtual void set_value(Matrix){};
-        virtual const Matrix& get_(Matrix&){};
+        virtual  Matrix& get_(Matrix&){};
 
 
         template <typename T>
-        const T& get_value() 
+         T& get_value() 
         {
             T _;
+            /*
+            std::cout<<"================:"<<get_(_)<<&get_(_)<<std::endl;
+            */
             return get_(_);
         }
 
@@ -52,13 +56,13 @@ class Data:public Data_
             value=_value;
         }
         
-        T get_value()
+        T& get_value()
         {
             return value;
         }
 
 
-        const T& get_(T& _value)
+         T& get_(T& _value)
         {
             return value;
         }
