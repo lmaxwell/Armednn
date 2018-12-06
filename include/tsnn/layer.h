@@ -13,6 +13,7 @@
 #include "tsnn/config.h"
 
 
+namespace Tsnn{
 
 class Param
 {
@@ -22,6 +23,7 @@ class Param
         Param(std::string _name,size_t _rows,size_t _cols):name(_name),rows(_rows),cols(_cols){};
 
         std::string name;
+
         size_t rows;
         size_t cols;
 
@@ -40,10 +42,26 @@ class Param
 
         }
 
+        void load(Vector _value)
+        {
+            if(_value.rows()==rows && _value.cols()==cols)
+            {
+                value=_value;
+            }
+            else
+            {
+                std::cout<<"wrong dimention"<<std::endl;
+            }
+
+        }
+
+
+        /*
         void load( float *p)
         {
             value=Eigen::Map<Matrix>(p,rows,cols);
         }
+        */
 
 };
 
@@ -64,6 +82,7 @@ class Layer{
         Layer(Config _config,std::string _name):config(_config),name(_name){mark=2;}
 
         void add_param(std::string name, size_t rows, size_t cols);
+        void add_param(std::string name, size_t cols);
 
 
     public:
@@ -114,11 +133,13 @@ class Layer{
 
         Layer* load_param( std::string name,  Matrix value);
 
-        Layer* load_param( std::string name, float* value);
+        //Layer* load_param( std::string name, float* value);
 
-        Matrix& get_param(std::string name)
+        template <typename T>
+        Eigen::Map<T> get_param(std::string name)
         {
-            return param[name].value;
+            std::cout<<name<<" "<<param[name].value.data()<<std::endl;
+            return Eigen::Map<T>(param[name].value.data(),param[name].rows,param[name].cols);
         }
         
         size_t mark;
@@ -161,6 +182,7 @@ class Layer{
     }; \
 static Type##Factory global_##Type##Factory;
 
+}
 
 
 #endif

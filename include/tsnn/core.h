@@ -1,4 +1,11 @@
 #include "Eigen/Dense"
 
-typedef Eigen::MatrixXf Matrix;
-typedef Eigen::MatrixXf Vector;
+namespace Tsnn{
+
+
+//Row Major Matrix
+typedef Eigen::Matrix<float,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> Matrix; 
+//Row Vector
+typedef Eigen::Matrix<float,1,Eigen::Dynamic> Vector; 
+
+}

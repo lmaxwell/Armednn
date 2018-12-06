@@ -1,5 +1,7 @@
 #include "tsnn/config.h"
 
+namespace Tsnn{
+
 void Config::str2(const std::string& value1, int& value2)
 {
         value2= atoi(value1.c_str());
@@ -35,4 +37,6 @@ template std::string Config::get(const std::string&);
 void Config::set(std::string name,std::string value)
 {
     configs[name]=value;
+}
+
 }

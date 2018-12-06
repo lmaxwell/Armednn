@@ -4,6 +4,7 @@
 #include <iostream>
 #include "tsnn/core.h"
 #include <string>
+namespace Tsnn{
 typedef std::string string;
 
 class Layer;
@@ -80,5 +81,6 @@ class InputData:public Data<T>
         InputData(string name):Data<T>(name){};
     ;
 };
+}
 
 #endif

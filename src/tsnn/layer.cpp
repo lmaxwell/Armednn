@@ -1,5 +1,6 @@
 #include "tsnn/layer.h"
 
+namespace Tsnn{
 /*=============================
  layer factories registery 
 */
@@ -120,19 +121,27 @@ void Layer::add_param( std::string name,size_t rows,size_t cols)
     param[name]=Param(name,rows,cols);
 }
 
+void Layer::add_param( std::string name,size_t cols)
+{
+    param[name]=Param(name,1,cols);
+}
+
 Layer* Layer::load_param( std::string name,  Matrix value)
 {
     param[name].load(value);
     return this;
 }
 
+/*
 Layer* Layer::load_param( std::string name, float* value)
 {
     param[name].load(value);
     return this;
 }
+*/
 
 
 template Layer* Layer::add_output<std::string>();
 template Layer* Layer::add_output<Matrix>();
 
+}

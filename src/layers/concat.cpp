@@ -2,6 +2,7 @@
 #include "concat.h"
 #include "iostream"
 
+namespace Tsnn{
 
 void Concat::inference()
 {
@@ -24,4 +25,6 @@ void Concat::inference()
     }
 
     get_output()[0]->set_value(D);
+}
+
 }

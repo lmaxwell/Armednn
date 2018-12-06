@@ -7,7 +7,8 @@
 #include <vector>
 #include <string>
 
-
+namespace Tsnn
+{
 /* 参考dynamic-graph
 #include <map>
 class Param
@@ -33,19 +34,17 @@ class Dense: public Layer{
 
                 //define parameter
                 add_param("weight",get_config<int>("dim0"),get_config<int>("dim1"));
-                add_param("bias",1,get_config<int>("dim1"));
+                add_param("bias",get_config<int>("dim1"));
             }
 
             std::string activation;
-
-            /*
-            Eigen::MatrixXf weight;
-            Eigen::VectorXf bias;
-            */
 
             void inference();
             
 };
 
+
 REGISTER_LAYER(Dense,dim0 dim1 activation)
+
+}
 #endif

@@ -3,6 +3,8 @@
 
 #include <string>
 #include <map>
+namespace Tsnn
+{
 class Config{
     public:
         Config(){}
@@ -19,5 +21,6 @@ class Config{
         void str2(const std::string&, float&);
         void str2(const std::string&, std::string&);
 };
+}
 
 #endif

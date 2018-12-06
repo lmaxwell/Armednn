@@ -1,6 +1,7 @@
 #include "split.h"
 #include "iostream"
 
+namespace Tsnn{
 
 void Split::inference()
 {
@@ -15,5 +16,7 @@ void Split::inference()
 
     for(int i=0;i<num_split;i++)
         get_output()[i]->set_value(input_mat.block(0,out_channels*i,length,out_channels));
+
+}
 
 }

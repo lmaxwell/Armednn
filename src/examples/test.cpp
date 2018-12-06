@@ -7,6 +7,7 @@
 using namespace std;
 using Eigen::MatrixXf;
 using Eigen::Map;
+using namespace Tsnn;
 
 
 
@@ -113,7 +114,7 @@ int main()
     for(int k=0;k<2;k++)
     {
         cout<<k<<"-th run:"<<endl;
-        net->feed({MatrixXf::Random(2,6)})->compute();
+        net->feed({Matrix::Random(2,6)})->compute();
         cout<<"input:"<<endl;
         cout<<input->get_value<Matrix>()<<endl;
         for(int i=0;i<net->out_nodes.size();i++)

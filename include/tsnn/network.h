@@ -2,6 +2,7 @@
 #define _Network_H_
 #include "tsnn/layer.h"
 
+namespace Tsnn{
 class Network
 {
     public:
@@ -148,6 +149,7 @@ class Network
         std::set<Layer *>layers;
 
 };
+}
 
 
 #endif

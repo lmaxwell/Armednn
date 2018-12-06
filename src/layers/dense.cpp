@@ -1,18 +1,16 @@
 #include "dense.h"
 #include "iostream"
 
+namespace Tsnn{
 
 void Dense::inference()
 {
-    //size_t dims=get_config<size_t>("dims");
 
-    Matrix& weight=get_param("weight");
-    Eigen::VectorXf bias=Eigen::Map<Eigen::VectorXf>(get_param("bias").data(),get_param("bias").cols());
+    Eigen::Map<Matrix> weight=get_param<Matrix>("weight");
+    //Vector& bias=Eigen::Map<Vector>(get_param<Matrix>("bias").data(),1,get_param<Matrix>("bias").cols());
+    Eigen::Map<Vector> bias=get_param<Vector>("bias");
 
-    /*
-    weight=Eigen::MatrixXf::Identity(dims,dims);
-    bias=Eigen::VectorXf::Zero(dims);
-    */
+    std::cout<<weight.data()<<" "<<bias.data()<<std::endl;
 
 
     /*
@@ -26,7 +24,6 @@ void Dense::inference()
     // in total three memory allocates. 
     */
 
-
     //avoid copy 
     Matrix& in_mat=get_input()[0]->get_value<Matrix>(); // use reference, no copy here
     //std::cout<<"return side:"<<&(get_input()[0]->get_value<Matrix>())<<" "<<&in_mat<<std::endl;   
@@ -37,7 +34,10 @@ void Dense::inference()
     //mat.setZero(); //need to do this in some cases
 
     mat.noalias()=in_mat*weight;
-    mat.rowwise()+=bias.transpose();//.transpose();
+    mat.rowwise()+=bias;
     // onlly one allocate
+
+}
+
 
 }

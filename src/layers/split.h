@@ -8,6 +8,7 @@
 #include <string>
 #include <iostream>
 
+namespace Tsnn{
 
 class Split: public Layer{
 
@@ -26,4 +27,6 @@ class Split: public Layer{
 };
 
 REGISTER_LAYER(Split,num_split axis)
+
+}
 #endif

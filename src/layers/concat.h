@@ -8,6 +8,8 @@
 #include <iostream>
 
 
+namespace Tsnn
+{
 class Concat: public Layer{
     public:
 
@@ -21,4 +23,5 @@ class Concat: public Layer{
 };
 
 REGISTER_LAYER(Concat,num_input)
+}
 #endif
