@@ -23,6 +23,7 @@ class Split: public Layer{
             size_t num_split;
 
             void inference();
+
             
 };
 

@@ -35,11 +35,10 @@ class Data_
         std::string name;
         Layer* from;
         Layer* to;
-        size_t mark;
 
     protected:
-        Data_(){mark=2;};
-        Data_(string _name):name(_name){mark=2;};
+        Data_(){};
+        Data_(string _name):name(_name){};
 
 };
 

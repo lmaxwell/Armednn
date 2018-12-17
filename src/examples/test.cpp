@@ -117,10 +117,11 @@ int main()
         net->feed({Matrix::Random(2,6)})->compute();
         cout<<"input:"<<endl;
         cout<<input->get_value<Matrix>()<<endl;
-        for(int i=0;i<net->out_nodes.size();i++)
+        for(int i=0;i<net->get_output().size();i++)
         {
-            cout<<i<<"-th output:"<<net->out_nodes[i]->name<<endl;
-            cout<<net->out_nodes[i]->get_value<Matrix>()<<endl;
+            cout<<i<<"-th output:"<<net->get_output()[i]->name<<endl;
+            cout<<net->get_output()[i]->get_value<Matrix>()<<endl;
         }
     }
+    delete l;
 }

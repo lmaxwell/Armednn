@@ -79,6 +79,7 @@ class Layer{
     protected:
         Layer(){mark=2;}
 
+
         Layer(Config _config,std::string _name):config(_config),name(_name){mark=2;}
 
         void add_param(std::string name, size_t rows, size_t cols);
@@ -86,15 +87,15 @@ class Layer{
 
 
     public:
+
+        virtual ~Layer(){std::cout<<"delete layer"<<std::endl;}
         
-        virtual ~Layer(){}
+        //virtual ~Layer(){}
 
         virtual void inference()=0;
 
-
-        //type of the layer;
         std::string type;
-        //name of the layer
+
         std::string name;
 
 
@@ -122,8 +123,8 @@ class Layer{
         
 
 
-        std::vector<pData> get_output(){return out_nodes;};
-        std::vector<pData> get_input(){return in_nodes;};
+        std::vector<pData>& get_output(){return out_nodes;};
+        std::vector<pData>& get_input(){return in_nodes;};
 
 
         static void register_config(const std::string& layer_name, const std::string& config_names);
@@ -159,7 +160,6 @@ class Layer{
 
         template <typename T>
         Layer* add_output();
-
 
 };
 
