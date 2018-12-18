@@ -11,6 +11,15 @@ class Config{
 
         void set(std::string name,std::string value);
 
+        void add(std::string name);
+
+        bool has(std::string name);
+
+        std::map<std::string,std::string>& getall()
+        {
+            return configs;
+        }
+
         template <typename T>
         T get(const std::string& name);
 

@@ -11,6 +11,7 @@
 
 #include "tsnn/data.h"
 #include "tsnn/config.h"
+#include "tsnn/core.h"
 
 
 namespace Tsnn{
@@ -31,28 +32,15 @@ class Param
 
         void load(Matrix _value)
         {
-            if(_value.rows()==rows && _value.cols()==cols)
-            {
-                value=_value;
-            }
-            else
-            {
-                std::cout<<"wrong dimention"<<std::endl;
-            }
+            CHECK(_value.rows()==rows && _value.cols()==cols)<<"loading Matrix has wrong dimension";
+            value=_value;
 
         }
 
         void load(Vector _value)
         {
-            if(_value.rows()==rows && _value.cols()==cols)
-            {
-                value=_value;
-            }
-            else
-            {
-                std::cout<<"wrong dimention"<<std::endl;
-            }
-
+            CHECK(_value.rows()==rows && _value.cols()==cols)<<"loading Matrix has wrong dimension";
+            value=_value;
         }
 
 
@@ -62,7 +50,6 @@ class Param
             value=Eigen::Map<Matrix>(p,rows,cols);
         }
         */
-
 };
 
 typedef  std::map<std::string,Param> Params;
@@ -77,27 +64,12 @@ class LayerFactory
 
 class Layer{ 
     protected:
-        Layer(){mark=2;}
 
-
-        Layer(Config _config,std::string _name):config(_config),name(_name){mark=2;}
+        explicit Layer(Config _config,std::string _name);
 
         void add_param(std::string name, size_t rows, size_t cols);
-        void add_param(std::string name, size_t cols);
 
-
-    public:
-
-        virtual ~Layer(){std::cout<<"delete layer"<<std::endl;}
-        
-        //virtual ~Layer(){}
-
-        virtual void inference()=0;
-
-        std::string type;
-
-        std::string name;
-
+        bool has_param(std::string name);
 
         void set_num_input(size_t num)
         {
@@ -112,6 +84,22 @@ class Layer{
             num_output=num;
         }
 
+
+    public:
+
+        virtual ~Layer(){std::cout<<"delete layer"<<std::endl;}
+        
+        //virtual ~Layer(){}
+
+        virtual void inference()=0;
+
+        virtual void prepare(){};
+
+        std::string type;
+
+        std::string name;
+
+
         Layer* set_input(std::vector<pData> inputs);
 
         Layer* set_input(pData input);
@@ -120,33 +108,26 @@ class Layer{
 
         T get_config(const std::string& name);
         Layer* set_config(const std::string name,const std::string value);
-        
-
 
         std::vector<pData>& get_output(){return out_nodes;};
         std::vector<pData>& get_input(){return in_nodes;};
 
+        static Layer* create(const std::string &type, const Config _config, const std::string &name);
 
         static void register_config(const std::string& layer_name, const std::string& config_names);
+
         static void register_layer(const std::string& name, LayerFactory *factory);
 
-        static Layer* create(const std::string &type, const Config _config, const std::string &name);
 
         Layer* load_param( std::string name,  Matrix value);
 
-        //Layer* load_param( std::string name, float* value);
-
-        template <typename T>
-        Eigen::Map<T> get_param(std::string name)
-        {
-            std::cout<<name<<" "<<param[name].value.data()<<std::endl;
-            return Eigen::Map<T>(param[name].value.data(),param[name].rows,param[name].cols);
-        }
+        Matrix& get_param(std::string name);
         
-        size_t mark;
-
 
     private:
+
+
+
         Config config;
 
         Params param;
@@ -163,17 +144,15 @@ class Layer{
 
 };
 
-#define FORCE_LINK_THIS(x) int force_link_##x = 0;
-#define FORCE_LINK_THAT(x) { extern int force_link_##x; force_link_##x = 1; }
 
 #define REGISTER_LAYER(Type,ConfigNames) \
     class Type##Factory : public LayerFactory { \
         public: \
                 Type##Factory() \
         { \
-            std::cout<<"registering "<<#Type<<std::endl;\
+            DEBUG<<"registering "<<#Type;\
             Layer::register_layer(#Type, this); \
-            std::cout<<"register "<<#Type<<" done"<<std::endl;\
+            DEBUG<<"register "<<#Type<<" done";\
             Layer::register_config(#Type, #ConfigNames); \
         } \
         virtual Layer *create(Config _config,std::string name) { \

@@ -19,7 +19,9 @@ class Concat: public Layer{
                 set_num_output<Matrix>(1);
             }
 
+            size_t num_input;
             void inference();
+            void prepare();
 };
 
 REGISTER_LAYER(Concat,num_input)

@@ -9,21 +9,6 @@
 
 namespace Tsnn
 {
-/* 参考dynamic-graph
-#include <map>
-class Param
-{
-    public:
-        Param(){}
-        Eigen::MatrixXf& get(std::string name)
-        {
-            return 
-        }
-
-    private:
-        std::map<std::string,Eigen::MatrixXf> params;
-}
-*/
 
 class Dense: public Layer{
     public:
@@ -32,19 +17,25 @@ class Dense: public Layer{
                 set_num_input(1);
                 set_num_output<Matrix>(1);
 
-                //define parameter
-                add_param("weight",get_config<int>("dim0"),get_config<int>("dim1"));
-                add_param("bias",get_config<int>("dim1"));
+                add_param("weight",get_config<size_t>("dim0"),get_config<size_t>("dim1"));
+                add_param("bias",1,get_config<size_t>("dim1"));
             }
 
+            Matrix weight;
+            Matrix bias;
+
+            size_t dim0;
+            size_t dim1;
             std::string activation;
+            
+            void prepare();
 
             void inference();
             
 };
 
 
-REGISTER_LAYER(Dense,dim0 dim1 activation)
+REGISTER_LAYER(Dense, dim0 dim1 activation)
 
 }
 #endif

@@ -19,15 +19,16 @@ class Split: public Layer{
                 set_num_output<Matrix>(get_config<size_t>("num_split"));
             }
 
-            size_t axis;
             size_t num_split;
+
+            void prepare();
 
             void inference();
 
             
 };
 
-REGISTER_LAYER(Split,num_split axis)
+REGISTER_LAYER(Split,num_split)
 
 }
 #endif

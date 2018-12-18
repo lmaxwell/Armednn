@@ -15,6 +15,8 @@ Network* Network::bind(std::vector<pData> _in_nodes,std::vector<pData> _out_node
         iterate_layers(out_nodes[i]);
     }
 
+    prepare();
+
     return this;
 }
 
@@ -28,6 +30,13 @@ Network* Network::feed(const std::vector<Matrix> &data)
 }
 
 
+void Network::prepare()
+{
+    for(auto ite=layers_v.begin();ite!=layers_v.end();ite++)
+    {
+        (*ite)->prepare();
+    }
+}
 
 
 void Network::compute()
@@ -65,9 +74,7 @@ void Network::iterate_layers(pData node)
 void Network::print()
 {
 
-    //std::set<Layer *>::iterator it;
-    std::vector<Layer *>::iterator it;
-    for(it=layers_v.begin();it!=layers_v.end();it++)
+    for(auto it=layers_v.begin();it!=layers_v.end();it++)
     {
         std::string temp=(*it)->name;
         temp+="\t{ ";

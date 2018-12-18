@@ -1,6 +1,8 @@
 #include "tsnn/core.h"
 #include <iostream>
 
+#ifndef _OP_H
+#define _OP_H
 namespace Tsnn{
 
 
@@ -8,36 +10,22 @@ namespace Tsnn{
 add in place
 operate a+b , and store result in a
 */
-void add(Matrix& a,Matrix& b)
-{
-    a+=b;
-}
+bool add(Matrix& a,Matrix& b);
+
 
 /*
 multiply
 operate a*b , and store result in c  
 */
-TSNN_STATUS  multiply(Matrix& a, Matrix& b, Matrix& c)
-{
-    if(a.rows==b.cols and a.cols==b.rows)
-    {
-        c.noalias() = a*b;
-    }
-    else
-    {
-        std::cout<<"
-    }
-
-}
+bool  multiply(Matrix& a, Matrix& b, Matrix& c);
 
 /*
 multiply elementwise
 operate a*b  , and store result in c  
 */
-void multiply(
-
-
+bool multiply_elemwise(Matrix &a, Matrix&b, Matrix& c);
 
 
 }
+#endif
 

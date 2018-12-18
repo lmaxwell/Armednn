@@ -46,9 +46,26 @@ void Layer::register_config(const std::string& layer_name, const std::string& co
 }
 /*=============================*/
 
+Layer::Layer(Config _config,std::string _name):config(_config),name(_name)
+{
+
+}
 
 
-Layer* Layer::create(const std::string &type, const Config _config, const std::string &name)
+bool has_config(const std::string name, const std::string type)
+{
+    std::set<std::string>::iterator ite=configs_type.get()[type].find(name);
+    if(ite==configs_type.get()[type].end())
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+}
+
+Layer* Layer::create(const std::string &type, Config _config, const std::string &name)
 {
 
     fmap::iterator ite=factories.get().find(type);
@@ -60,6 +77,15 @@ Layer* Layer::create(const std::string &type, const Config _config, const std::s
     }
     else
     {
+        for(auto it=_config.getall().begin();it!=_config.getall().end();it++)
+        {
+            
+            CHECK(has_config(it->first,type))<<"no config:\""<<it->first<<"\" in "<<type<<"!";
+        }
+        for(auto it=configs_type.get()[type].begin();it!=configs_type.get()[type].end();it++)
+        {
+            CHECK(_config.has(*it))<<"config:\""<<*it<<"\" in "<<type<<" is not set!";
+        }
         Layer* layer= factories.get()[type]->create(_config,name);
         layer->type=type;
         return layer;
@@ -67,9 +93,12 @@ Layer* Layer::create(const std::string &type, const Config _config, const std::s
 }
 
 
+
+
 template <typename T>
 T Layer::get_config(const std::string& name)
 {
+    CHECK(config.has(name))<<"no config:"<<name;
     return config.get<T>(name);
 }
 
@@ -82,15 +111,8 @@ template std::string Layer::get_config<std::string>(const std::string&);
 Layer* Layer::set_config(const std::string name,const std::string value)
 {
 
-    std::set<std::string>::iterator ite=configs_type.get()[this->type].find(name);
-    if(ite==configs_type.get()[this->type].end())
-    {
-        //TODO:exception handler
-        std::cout<<"ERROR: no config name "+ name+" for "+ this->type + " layer "<<std::endl;
-        exit(1);
-    }
-    else
-        config.set(name,value);
+    CHECK(has_config(name,type))<<"no config:"<<name<<" in "<<type;
+    config.set(name,value);
     return this;
 }
 
@@ -121,15 +143,26 @@ void Layer::add_param( std::string name,size_t rows,size_t cols)
     param[name]=Param(name,rows,cols);
 }
 
-void Layer::add_param( std::string name,size_t cols)
+bool Layer::has_param(std::string name)
 {
-    param[name]=Param(name,1,cols);
+    auto it=param.find(name);
+    if(it==param.end())
+        return false;
+    else
+        return true;
 }
 
 Layer* Layer::load_param( std::string name,  Matrix value)
 {
+    CHECK(has_param(name))<<"no param:\""<<name<<"\""<<" in \""<<type<<"\"!";
     param[name].load(value);
     return this;
+}
+
+Matrix& Layer::get_param(std::string name)
+{
+    CHECK(has_param(name))<<"no param:\""<<name<<"\""<<" in \""<<type<<"\"!";
+    return param[name].value;
 }
 
 /*

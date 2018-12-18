@@ -11,12 +11,15 @@ class Network
 
         Network* feed(const std::vector<Matrix> &data);
 
+        void prepare();
+
         void compute();
 
         void print();
 
         std::vector<pData>& get_output();
         std::vector<pData>& get_input();
+
 
     private:
 

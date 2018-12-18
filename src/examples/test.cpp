@@ -3,30 +3,43 @@
 
 #include <map>
 #include <string>
+#include <chrono>
+#include <time.h>
 
 using namespace std;
-using Eigen::MatrixXf;
+using Eigen::MatrixXd;
 using Eigen::Map;
 using namespace Tsnn;
 
-
+double diffclock(clock_t clock1,clock_t clock2)
+{
+    double diffticks=clock1-clock2;
+    double diffms=(diffticks)/CLOCKS_PER_SEC;
+    return diffms;
+} 
 
 
 int main()
 {
 
+    Tsnn::LogMessage::enable(true);
+
+    DEBUG<<"info";
+
+
+
     /*
     Layer* layer=new Layer();
     return 1;
-    MatrixXf *xf;
+    MatrixXd *xf;
 
 
-    MatrixXf mat(2,2);
+    MatrixXd mat(2,2);
     mat(0,0)=1;
     mat(0,1)=2;
     mat(1,0)=3;
     mat(1,1)=4;
-    MatrixXf mat2=mat;
+    MatrixXd mat2=mat;
     for(int i=0;i<4;i++)
         cout<<mat.data()[i]<<endl;
     cout<<mat.data()<<"\t"<<mat.array().data()<<"\t"<<mat2.data()<<endl;
@@ -62,24 +75,24 @@ int main()
     Config *config= new Config();
     
     config->set("activation","tanh");
-    config->set("dim0","6");
-    config->set("dim1","6");
+    config->set("dim0","100");
+    config->set("dim1","1024");
     auto d=Layer::create("Dense",
                          *config,
                         "Dense")->set_input(input);
-    d->load_param("weight",Matrix::Identity(6,6));
-    d->load_param("bias",Matrix::Zero(1,6));
+    d->load_param("weight",Matrix::Identity(100,1024));
+    d->load_param("bias",Matrix::Zero(1,1024));
     auto x=d->get_output();
-    cout<<x.size()<<endl;
+    INFO<<x.size();
     
 
+    /*
     config= new Config();
     config->set("num_split","2");
-    config->set("axis","1");
     auto l=Layer::create("Split",
                          *config,
                          "Split-0")->set_input(x);
-    cout<<l->get_config<size_t>("num_split")<<endl;
+    INFO<<l->get_config<size_t>("num_split");
 
     auto y=l->get_output();
 
@@ -98,30 +111,49 @@ int main()
     {
         config= new Config();
         config->set("num_split","2");
-        config->set("axis","1");
         auto z=Layer::create("Split",
                              *config,
                              "Split-"+to_string(i+1))->set_input(y2[i])
                                                      ->get_output();
         out.insert(out.end(),z.begin(),z.end());
     }
+    */
 
 
 
-    Network *net =new Network({input},out);
+    //Network *net =new Network({input},out);
+    Network *net =new Network({input},{x});
     net->print();
+
+    Eigen::MatrixXd a=Eigen::MatrixXd::Random(50000,100);
+    Eigen::MatrixXd b=Eigen::MatrixXd::Random(100,1000);
+    Eigen::MatrixXd c;
+    clock_t starttime = clock(); 
+    c.noalias()=a*b;
+    clock_t endtime = clock();
+
+    cout << "Time elapsed: " << diffclock( endtime, starttime) \
+        << " sec." << endl;
+    
 
     for(int k=0;k<2;k++)
     {
-        cout<<k<<"-th run:"<<endl;
-        net->feed({Matrix::Random(2,6)})->compute();
-        cout<<"input:"<<endl;
-        cout<<input->get_value<Matrix>()<<endl;
+        Tsnn::LogMessage::enable(true);
+        auto start=std::chrono::system_clock::now();
+        INFO<<k<<"-th run:";
+        net->feed({Matrix::Random(48000,100)})->compute();
+        /*
+        INFO<<"input"<<endl<<input->get_value<Matrix>();
         for(int i=0;i<net->get_output().size();i++)
         {
-            cout<<i<<"-th output:"<<net->get_output()[i]->name<<endl;
-            cout<<net->get_output()[i]->get_value<Matrix>()<<endl;
+            INFO<<i<<"-th output:"<<net->get_output()[i]->name<<endl
+                <<net->get_output()[i]->get_value<Matrix>();
         }
+        */
+        auto end=std::chrono::system_clock::now();
+        auto duration=std::chrono::duration_cast<std::chrono::microseconds>(end-start);
+        Tsnn::LogMessage::enable(true);
+        INFO<<"COST "<<double(duration.count()) * std::chrono::microseconds::period::num / std::chrono::microseconds::period::den;
     }
-    delete l;
+    //delete l;
 }

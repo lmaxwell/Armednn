@@ -33,10 +33,22 @@ template int Config::get(const std::string&);
 template float Config::get(const std::string&);
 template std::string Config::get(const std::string&);
 
+void Config::add(std::string name)
+{
+    configs[name]="";
+}
 
 void Config::set(std::string name,std::string value)
 {
+
     configs[name]=value;
+}
+bool Config::has(std::string name)
+{
+    if(configs.find(name)==configs.end())
+        return false;
+    else
+        return true;
 }
 
 }

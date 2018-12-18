@@ -1,16 +1,29 @@
 #include "dense.h"
+#include "tsnn/op.h"
 #include "iostream"
+#include  <chrono>
 
 namespace Tsnn{
+
+
+void Dense::prepare()
+{
+    weight=get_param("weight");
+    bias=get_param("bias");
+    dim0=get_config<size_t>("dim0");
+    dim1=get_config<size_t>("dim1");
+    activation=get_config<std::string>("activation");
+}
+
 
 void Dense::inference()
 {
 
-    Eigen::Map<Matrix> weight=get_param<Matrix>("weight");
+    //Eigen::Map<Matrix> weight=get_param<Matrix>("weight");
+    //Matrix weight=get_param<Matrix>("weight");
     //Vector& bias=Eigen::Map<Vector>(get_param<Matrix>("bias").data(),1,get_param<Matrix>("bias").cols());
-    Eigen::Map<Vector> bias=get_param<Vector>("bias");
+    //Vector bias=get_param<Vector>("bias");
 
-    std::cout<<weight.data()<<" "<<bias.data()<<std::endl;
 
 
     /*
@@ -29,12 +42,28 @@ void Dense::inference()
     //std::cout<<"return side:"<<&(get_input()[0]->get_value<Matrix>())<<" "<<&in_mat<<std::endl;   
 
     Matrix& mat=get_output()[0]->get_value<Matrix>(); 
-    mat.resize(in_mat.rows(),get_config<size_t>("dim1")); // use resize() to reallocate memory
+
+    mat.resize(in_mat.rows(),dim1); // use resize() to reallocate memory
 
     //mat.setZero(); //need to do this in some cases
 
-    mat.noalias()=in_mat*weight;
-    mat.rowwise()+=bias;
+    Tsnn::LogMessage::enable(true);
+    auto start=std::chrono::system_clock::now();
+
+    CHECK(multiply(in_mat,weight,mat));
+
+    auto end=std::chrono::system_clock::now();
+    auto duration=std::chrono::duration_cast<std::chrono::microseconds>(end-start);
+    INFO<<"Multiply COST "<<double(duration.count()) * std::chrono::microseconds::period::num / std::chrono::microseconds::period::den;
+
+    start=std::chrono::system_clock::now();
+
+    CHECK(add(mat,bias));
+
+    end=std::chrono::system_clock::now();
+    duration=std::chrono::duration_cast<std::chrono::microseconds>(end-start);
+    INFO<<"Add COST "<<double(duration.count()) * std::chrono::microseconds::period::num / std::chrono::microseconds::period::den;
+    Tsnn::LogMessage::enable(false);
     // onlly one allocate
 
 }
