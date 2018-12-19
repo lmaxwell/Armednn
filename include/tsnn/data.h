@@ -7,29 +7,38 @@
 namespace Tsnn{
 typedef std::string string;
 
-class Layer;
 
+
+
+template <typename T>
+string GET_TYPE()
+{
+    if(typeid(T)==typeid(string))
+        return "string";
+    else if(typeid(T)==typeid(Matrix))
+        return "Matrix";
+    else
+        return typeid(T).name();
+}
+
+
+class Layer;
+template <typename T> class Data;
 class Data_
 {
     public:
         virtual void set_value(int){};
-        virtual  int& get_(int&){};
 
         virtual void set_value(string){};
-        virtual  string& get_(string&){};
 
         virtual void set_value(Matrix){};
-        virtual  Matrix& get_(Matrix&){};
 
+        virtual string& get_type()=0;
 
         template <typename T>
-         T& get_value() 
+        T& get_value() 
         {
-            T _;
-            /*
-            std::cout<<"================:"<<get_(_)<<&get_(_)<<std::endl;
-            */
-            return get_(_);
+           return static_cast<Data<T>&>(*this).get_value();
         }
 
         std::string name;
@@ -48,8 +57,8 @@ template <typename T>
 class Data:public Data_
 {
     public:
-        Data():Data_(){};
-        Data(string name):Data_(name){};
+        Data():Data_(){type=GET_TYPE<T>();};
+        Data(string name):Data_(name){type=GET_TYPE<T>();};
 
         void set_value(T _value)
         {
@@ -58,28 +67,19 @@ class Data:public Data_
         
         T& get_value()
         {
+            CHECK_EQ(get_type(),GET_TYPE<T>())<<"cannot get_value, "<<GET_TYPE<T>()<<"; This DataPort holds data of "<<get_type();
             return value;
         }
-
-
-         T& get_(T& _value)
+        string& get_type()
         {
-            return value;
+            return type;
         }
         
     private:
         T value;
+        string type;
 };
 
-template <typename T>
-class InputData:public Data<T>
-{
-    public:
-
-        InputData():Data<T>(){};
-        InputData(string name):Data<T>(name){};
-    ;
-};
 }
 
 #endif
