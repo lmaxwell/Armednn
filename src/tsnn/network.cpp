@@ -4,9 +4,11 @@ namespace Tsnn{
 Network::Network(std::vector<pData> _in_nodes,std::vector<pData> _out_nodes){
     bind(_in_nodes,_out_nodes);
 }
+
 Network::~Network()
 {
     std::for_each(layers_v.begin(),layers_v.end(),[](Layer *p){delete p;p=nullptr;});
+    std::for_each(in_nodes.begin(),in_nodes.end(),[](Data_ *p){delete p;p=nullptr;});
     std::cout<<"delete network"<<std::endl;
 }
 
@@ -32,6 +34,35 @@ Network* Network::feed(const std::vector<Matrix> &data)
         in_nodes[i]->set_value(data[i]);
     }
     return this;
+}
+
+std::vector<pData> Network::Input()
+{
+    Data_ *p =new Data<Matrix>("input");
+    in_nodes.push_back(p);
+    std::vector<pData> vtmp;
+    vtmp.emplace_back(p);
+    return vtmp;
+}
+
+void Network::Output(std::vector<pData> outs)
+{
+    out_nodes=outs;
+
+    for(int i=0;i<out_nodes.size();i++)
+    {
+        iterate_layers(out_nodes[i]);
+    }
+
+    prepare();
+}
+
+Layer* Network::get_layer(std::string name)
+{
+    auto it=std::find_if(layers_v.begin(),layers_v.end(),
+            [name](Layer * l){return l->name==name;});
+    CHECK(it!=layers_v.end())<<"cannot find layer: "<<name;
+    return *it;
 }
 
 

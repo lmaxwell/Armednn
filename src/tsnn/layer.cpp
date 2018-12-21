@@ -57,6 +57,12 @@ Layer::~Layer()
     std::cout<<"delete layer"<<std::endl;
 }
 
+std::vector<pData>& Layer::operator()(std::vector<pData> inputs)
+{
+    in_nodes=inputs;
+    return out_nodes;
+}
+
 bool has_config(const std::string name, const std::string type)
 {
     std::set<std::string>::iterator ite=configs_type.get()[type].find(name);
@@ -70,7 +76,7 @@ bool has_config(const std::string name, const std::string type)
     }
 }
 
-Layer* Layer::create(const std::string &type, Config _config, const std::string &name)
+Layer& Layer::create(const std::string &type, Config _config, const std::string &name)
 {
 
     fmap::iterator ite=factories.get().find(type);
@@ -78,7 +84,7 @@ Layer* Layer::create(const std::string &type, Config _config, const std::string 
     {
         //exception
         std::cout<<type<<" not implemented!"<<std::endl;
-        return nullptr;
+        exit(1);
     }
     else
     {
@@ -93,7 +99,8 @@ Layer* Layer::create(const std::string &type, Config _config, const std::string 
         }
         Layer* layer= factories.get()[type]->create(_config,name);
         layer->type=type;
-        return layer;
+        INFO<<"adrress of "<<name<<":"<<layer;
+        return *layer;
     }
 }
 

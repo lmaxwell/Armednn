@@ -7,6 +7,7 @@ class Network
 {
     public:
 
+        explicit Network(){};
         explicit Network(std::vector<pData> _in_nodes,std::vector<pData> _out_nodes);
 
         Network* feed(const std::vector<Matrix> &data);
@@ -17,11 +18,15 @@ class Network
 
         void print();
 
+        std::vector<pData> Input();
+        void Output(std::vector<pData> outs);
+
         std::vector<pData>& get_output();
         std::vector<pData>& get_input();
 
-        ~Network();
+        Layer *get_layer(std::string name);
 
+        ~Network();
 
     private:
 

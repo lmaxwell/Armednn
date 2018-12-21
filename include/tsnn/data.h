@@ -68,6 +68,7 @@ class Data:public Data_
         T& get_value()
         {
             CHECK_EQ(get_type(),GET_TYPE<T>())<<"cannot get_value, "<<GET_TYPE<T>()<<"; This DataPort holds data of "<<get_type();
+            INFO<<&value;
             return value;
         }
         string& get_type()

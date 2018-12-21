@@ -90,7 +90,7 @@ class Layer{
         
         virtual ~Layer();
 
-        virtual void inference()=0;
+        virtual void inference(){};
 
         virtual void prepare(){};
 
@@ -98,6 +98,7 @@ class Layer{
 
         std::string name;
 
+        std::vector<pData>& operator()(std::vector<pData> inputs);
 
         Layer* set_input(std::vector<pData> inputs);
 
@@ -111,7 +112,7 @@ class Layer{
         std::vector<pData>& get_output(){return out_nodes;};
         std::vector<pData>& get_input(){return in_nodes;};
 
-        static Layer* create(const std::string &type, const Config _config, const std::string &name);
+        static Layer& create(const std::string &type, const Config _config, const std::string &name);
 
         static void register_config(const std::string& layer_name, const std::string& config_names);
 
