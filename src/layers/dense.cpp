@@ -47,7 +47,6 @@ void Dense::inference()
 
     //mat.setZero(); //need to do this in some cases
 
-    Tsnn::LogMessage::enable(true);
     auto start=std::chrono::system_clock::now();
 
     CHECK(multiply(in_mat,weight,mat));
@@ -63,7 +62,6 @@ void Dense::inference()
     end=std::chrono::system_clock::now();
     duration=std::chrono::duration_cast<std::chrono::microseconds>(end-start);
     INFO<<"Add COST "<<double(duration.count()) * std::chrono::microseconds::period::num / std::chrono::microseconds::period::den;
-    Tsnn::LogMessage::enable(false);
     // onlly one allocate
 
 }

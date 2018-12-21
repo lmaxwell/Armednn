@@ -4,6 +4,11 @@ namespace Tsnn{
 Network::Network(std::vector<pData> _in_nodes,std::vector<pData> _out_nodes){
     bind(_in_nodes,_out_nodes);
 }
+Network::~Network()
+{
+    std::for_each(layers_v.begin(),layers_v.end(),[](Layer *p){delete p;p=nullptr;});
+    std::cout<<"delete network"<<std::endl;
+}
 
 Network* Network::bind(std::vector<pData> _in_nodes,std::vector<pData> _out_nodes)
 {

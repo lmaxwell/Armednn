@@ -51,6 +51,11 @@ Layer::Layer(Config _config,std::string _name):config(_config),name(_name)
 
 }
 
+Layer::~Layer()
+{
+    std::for_each(out_nodes.begin(),out_nodes.end(),[](pData p){delete p;p=nullptr;});
+    std::cout<<"delete layer"<<std::endl;
+}
 
 bool has_config(const std::string name, const std::string type)
 {

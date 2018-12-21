@@ -42,8 +42,8 @@ class Data_
         }
 
         std::string name;
-        Layer* from;
-        Layer* to;
+        Layer* from=nullptr;
+        Layer* to=nullptr;
 
     protected:
         Data_(){};

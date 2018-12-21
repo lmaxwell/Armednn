@@ -87,9 +87,8 @@ class Layer{
 
     public:
 
-        virtual ~Layer(){std::cout<<"delete layer"<<std::endl;}
         
-        //virtual ~Layer(){}
+        virtual ~Layer();
 
         virtual void inference()=0;
 

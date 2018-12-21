@@ -75,18 +75,17 @@ int main()
     Config *config= new Config();
     
     config->set("activation","tanh");
-    config->set("dim0","100");
-    config->set("dim1","1024");
+    config->set("dim0","10");
+    config->set("dim1","10");
     auto d=Layer::create("Dense",
                          *config,
                         "Dense")->set_input(input);
-    d->load_param("weight",Matrix::Identity(100,1024));
-    d->load_param("bias",Matrix::Zero(1,1024));
+    d->load_param("weight",Matrix::Identity(10,10));
+    d->load_param("bias",Matrix::Zero(1,10));
     auto x=d->get_output();
     INFO<<x.size();
     
 
-    /*
     config= new Config();
     config->set("num_split","2");
     auto l=Layer::create("Split",
@@ -97,6 +96,7 @@ int main()
     auto y=l->get_output();
 
 
+    /*
     config= new Config();
     config->set("num_input","2");
     auto y2=Layer::create("Concat",
@@ -122,7 +122,7 @@ int main()
 
 
     //Network *net =new Network({input},out);
-    Network *net =new Network({input},{x});
+    Network *net =new Network({input},{y});
     net->print();
 
     Eigen::MatrixXd a=Eigen::MatrixXd::Random(50000,100);
@@ -141,19 +141,18 @@ int main()
         Tsnn::LogMessage::enable(true);
         auto start=std::chrono::system_clock::now();
         INFO<<k<<"-th run:";
-        net->feed({Matrix::Random(48000,100)})->compute();
-        /*
-        INFO<<"input"<<endl<<input->get_value<Matrix>();
+        net->feed({Matrix::Random(4,10)})->compute();
+        INFO<<"input:"<<endl<<net->get_input()[0]->get_value<Matrix>();;
         for(int i=0;i<net->get_output().size();i++)
         {
             INFO<<i<<"-th output:"<<net->get_output()[i]->name<<endl
-                <<net->get_output()[i]->get_value<Matrix>();
+                <<net->get_output()[i]->get_value<Matrix>()<<endl;
         }
-        */
         auto end=std::chrono::system_clock::now();
         auto duration=std::chrono::duration_cast<std::chrono::microseconds>(end-start);
         Tsnn::LogMessage::enable(true);
         INFO<<"COST "<<double(duration.count()) * std::chrono::microseconds::period::num / std::chrono::microseconds::period::den;
     }
-    //delete l;
+    delete net;
+    delete input;
 }

@@ -20,6 +20,8 @@ class Network
         std::vector<pData>& get_output();
         std::vector<pData>& get_input();
 
+        ~Network();
+
 
     private:
 
