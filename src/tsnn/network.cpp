@@ -8,7 +8,7 @@ Network::Network(std::vector<pData> _in_nodes,std::vector<pData> _out_nodes){
 Network::~Network()
 {
     std::for_each(layers_v.begin(),layers_v.end(),[](Layer *p){delete p;p=nullptr;});
-    std::for_each(in_nodes.begin(),in_nodes.end(),[](Data_ *p){delete p;p=nullptr;});
+    std::for_each(in_nodes.begin(),in_nodes.end(),[](Data *p){delete p;p=nullptr;});
     std::cout<<"delete network"<<std::endl;
 }
 
@@ -38,7 +38,7 @@ Network* Network::feed(const std::vector<Matrix> &data)
 
 std::vector<pData> Network::Input()
 {
-    Data_ *p =new Data<Matrix>("input");
+    Data *p =new Data("input");
     in_nodes.push_back(p);
     std::vector<pData> vtmp;
     vtmp.emplace_back(p);

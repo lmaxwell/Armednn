@@ -144,7 +144,7 @@ Layer* Layer::set_input(pData input)
 template <typename T>
 Layer* Layer::add_output()
 {
-    pData node=new Data<T>();
+    pData node=new Data();
     node->from=this;
     node->name=name+"["+std::to_string(out_nodes.size())+"]";
     out_nodes.push_back(node);

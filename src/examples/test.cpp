@@ -90,7 +90,7 @@ for(int i=0;i<20;i++)
         INFO<<k<<"-th run:";
         //net->feed({Matrix::Random(num,10)});//->compute();
         Matrix& mat= net->get_input()[0]->get_value<Matrix>();
-        mat=Matrix::Random(num,10);
+        net->get_input()[0]->get_value<Matrix>()=Matrix::Random(num,10);
         INFO<<&mat;
         //INFO<<"input:"<<endl<<net->get_input()[0]->get_value<Matrix>();;
         /*
