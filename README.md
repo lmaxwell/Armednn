@@ -2,7 +2,7 @@
 # define a inference network 
 
 
-'''
+```c++
 class MyNet:public Network
 {
     public:
@@ -25,4 +25,4 @@ class MyNet:public Network
         }
 
 }
-'''
+```
