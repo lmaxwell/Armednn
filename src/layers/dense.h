@@ -35,7 +35,8 @@ class Dense: public Layer{
 };
 
 
-REGISTER_LAYER(Dense, dim0 dim1 activation)
+REGISTER_LAYER(Dense, dim0 dim1 activation);
+//std::function<Layer& ( const std::string , const Config,  const std::string)> DENSE=std::bind(&Layer::create,"Dense",std::placeholders::_2,std::placeholders::_3);
 
 }
 #endif

@@ -54,7 +54,6 @@ void Network::Output(std::vector<pData> outs)
         iterate_layers(out_nodes[i]);
     }
 
-    prepare();
 }
 
 Layer* Network::get_layer(std::string name)

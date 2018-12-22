@@ -8,6 +8,7 @@
 #include <set>
 #include <sstream>
 #include <iostream>
+#include <functional>
 
 #include "tsnn/data.h"
 #include "tsnn/config.h"
@@ -143,6 +144,7 @@ class Layer{
         Layer* add_output();
 
 };
+
 
 
 #define REGISTER_LAYER(Type,ConfigNames) \

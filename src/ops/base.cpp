@@ -68,6 +68,7 @@ bool  multiply(Matrix& a, Matrix& b, Matrix& c)
     }
     else
     {
+        DEBUG<<"a.cols() " <<a.cols()<<" != b.rows() "<<b.rows();
         return false;
     }
 

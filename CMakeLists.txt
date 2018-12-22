@@ -14,7 +14,8 @@ target_include_directories(tsnn
             ${CMAKE_CURRENT_SOURCE_DIR}/src/layers
         )
 #set(CMAKE_CXX_FLAGS "-std=c++11 -march=native -o3 -fabi-version=6 ")
-set(CMAKE_CXX_FLAGS "-std=c++11 -msse4.2 -mavx2 -mfma -O3 -fabi-version=6 -DNDEBUG ")
+#set(CMAKE_CXX_FLAGS "-std=c++11 -msse4.2 -mavx2 -mfma -O2 -g -fabi-version=6 -DNDEBUG ")
+set(CMAKE_CXX_FLAGS "-std=c++11 -msse4.2 -mavx2 -mfma -O2 -g -fabi-version=6  ")
 target_compile_definitions(tsnn PRIVATE __DEBUG__)
 #target_compile_features(tsnn PRIVATE cxx_std_11 -march=native )
 
