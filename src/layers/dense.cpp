@@ -49,7 +49,7 @@ void Dense::inference()
 
     auto start=std::chrono::system_clock::now();
 
-    CHECK(multiply(in_mat,weight,mat));
+    CHECK(Op::multiply(in_mat,weight,mat));
 
     auto end=std::chrono::system_clock::now();
     auto duration=std::chrono::duration_cast<std::chrono::microseconds>(end-start);
@@ -57,14 +57,17 @@ void Dense::inference()
 
     start=std::chrono::system_clock::now();
 
-    CHECK(add(mat,bias));
+    CHECK(Op::add(mat,bias));
 
     end=std::chrono::system_clock::now();
     duration=std::chrono::duration_cast<std::chrono::microseconds>(end-start);
     INFO<<"Add COST "<<double(duration.count()) * std::chrono::microseconds::period::num / std::chrono::microseconds::period::den;
-    // onlly one allocate
+
+
+    CHECK(Op::activation(activation)(mat));
+
 
 }
 
 
-}
+}//Tsnn 

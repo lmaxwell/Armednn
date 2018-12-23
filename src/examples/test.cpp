@@ -71,13 +71,13 @@ int main()
 
     net->print();
 
-    int num=4000;
-    for(int i=0;i<200;i++)
+    int num=4;
+    for(int i=0;i<2;i++)
     {
         for(int k=0;k<1;k++)
         {
             num+=1;
-            Tsnn::LogMessage::enable(false);
+            Tsnn::LogMessage::enable(true);
             auto start=std::chrono::system_clock::now();
             INFO<<k<<"-th run:";
             net->feed({Matrix::Random(num,10)})->compute();
