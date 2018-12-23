@@ -4,29 +4,13 @@ namespace Tsnn{
 /*=============================
  layer factories registery 
 */
-typedef std::map<std::string,LayerFactory*> fmap;  
-typedef std::map<std::string,std::set<std::string>> confmap;
-
-struct Factories{
-    static fmap &get(){
-        static fmap factories;
-        return factories;
-    }
-} factories;
-
-struct Configs_Type{
-    static confmap &get(){
-        static confmap configs_type;
-        return configs_type;
-    }
-} configs_type;
 
 
 void Layer::register_layer(const std::string& name, LayerFactory *factory)
 {
-    fmap::iterator ite=factories.get().find(name);
-    if(ite==factories.get().end())
-        factories.get()[name]=factory;
+    Fmap::iterator ite=Factories::get().find(name);
+    if(ite==Factories::get().end())
+        Factories::get()[name]=factory;
     else
     {
         //throw a exception
@@ -41,7 +25,7 @@ void Layer::register_config(const std::string& layer_name, const std::string& co
     std::string config_name;
     while(ss>>config_name)
     {
-        configs_type.get()[layer_name].insert(config_name);
+        ConfigsType::get()[layer_name].insert(config_name);
     }
 }
 /*=============================*/
@@ -65,8 +49,8 @@ std::vector<pData>& Layer::operator()(std::vector<pData> inputs)
 
 bool has_config(const std::string name, const std::string type)
 {
-    std::set<std::string>::iterator ite=configs_type.get()[type].find(name);
-    if(ite==configs_type.get()[type].end())
+    std::set<std::string>::iterator ite=ConfigsType::get()[type].find(name);
+    if(ite==ConfigsType::get()[type].end())
     {
         return false;
     }
@@ -79,8 +63,8 @@ bool has_config(const std::string name, const std::string type)
 Layer& Layer::create(const std::string &type, Config _config, const std::string &name)
 {
 
-    fmap::iterator ite=factories.get().find(type);
-    if(ite==factories.get().end())
+    Fmap::iterator ite=Factories::get().find(type);
+    if(ite==Factories::get().end())
     {
         //exception
         std::cout<<type<<" not implemented!"<<std::endl;
@@ -93,11 +77,11 @@ Layer& Layer::create(const std::string &type, Config _config, const std::string 
             
             CHECK(has_config(it->first,type))<<"no config:\""<<it->first<<"\" in "<<type<<"!";
         }
-        for(auto it=configs_type.get()[type].begin();it!=configs_type.get()[type].end();it++)
+        for(auto it=ConfigsType::get()[type].begin();it!=ConfigsType::get()[type].end();it++)
         {
             CHECK(_config.has(*it))<<"config:\""<<*it<<"\" in "<<type<<" is not set!";
         }
-        Layer* layer= factories.get()[type]->create(_config,name);
+        Layer* layer= Factories::get()[type]->create(_config,name);
         layer->type=type;
         INFO<<"adrress of "<<name<<":"<<layer;
         return *layer;

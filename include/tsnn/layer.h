@@ -145,6 +145,22 @@ class Layer{
 
 };
 
+typedef std::map<std::string,LayerFactory*> Fmap;  
+typedef std::map<std::string,std::set<std::string>> Confmap;
+
+struct Factories{
+    static Fmap &get(){
+        static Fmap factories;
+        return factories;
+    }
+};
+
+struct ConfigsType{
+    static Confmap &get(){
+        static Confmap configs_type;
+        return configs_type;
+    }
+};
 
 
 #define REGISTER_LAYER(Type,ConfigNames) \
