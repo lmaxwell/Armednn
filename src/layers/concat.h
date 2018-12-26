@@ -13,7 +13,7 @@ namespace Tsnn
 class Concat: public Layer{
     public:
 
-            Concat(Config config,std::string name):Layer(config,name)
+            Concat(ConfigMap configs,std::string name):Layer(configs,name)
             {
                 set_num_input(get_config<size_t>("num_input"));
                 set_num_output<Matrix>(1);
@@ -25,6 +25,7 @@ class Concat: public Layer{
 };
 
 //REGISTER_LAYER(Concat,num_input);//.add_config().add_param("null","for test");
-REGISTER_LAYER(Concat).add_config("test").add_param("null","for test");
+REGISTER_LAYER(Concat).add_config("num_input","number of inputs",(size_t)1);
+
 }
 #endif

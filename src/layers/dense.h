@@ -12,7 +12,7 @@ namespace Tsnn
 
 class Dense: public Layer{
     public:
-            Dense(Config config,std::string name):Layer(config,name)
+            Dense(ConfigMap configs,std::string name):Layer(configs,name)
             {
                 set_num_input(1);
                 set_num_output<Matrix>(1);
@@ -35,9 +35,9 @@ class Dense: public Layer{
 };
 
 
-//REGISTER_LAYER(Dense, dim0 dim1 activation);
-REGISTER_LAYER(Dense);
-//std::function<Layer& ( const std::string , const Config,  const std::string)> DENSE=std::bind(&Layer::create,"Dense",std::placeholders::_2,std::placeholders::_3);
+REGISTER_LAYER(Dense).add_config("dim0","dimension 0",(size_t)4)
+                     .add_config("dim1","dimension 1",(size_t)4)
+                     .add_config("activation","activation function type",(std::string)"tanh");
 
 }
 #endif

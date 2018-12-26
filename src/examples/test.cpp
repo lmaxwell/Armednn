@@ -27,13 +27,13 @@ class MyNet:public Network
             std::string s="tanh";
 
             auto x=Layer::create("Dense",
-                                 {{"activation",s},{"dim0","10"},{"dim1","10"}},
+                                 {{"activation",s},{"dim0",(size_t)10},{"dim1",(size_t)10}},
                                  "Dense-0")(xx);
 
-            auto y=Layer::create("Split",{{"num_split","2"}},"Split-0")(x);
+            auto y=Layer::create("Split",{{"num_split",(size_t)2}},"Split-0")(x);
 
             y=Layer::create("Dense",
-                            {{"activation","tanh"},{"dim0","5"},{"dim1","5"}},
+                            {{"activation","tanh"},{"dim0",(size_t)5},{"dim1",(size_t)5}},
                             "Dense-1")({y[0]});
 
             Output(y);

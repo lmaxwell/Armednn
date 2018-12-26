@@ -48,19 +48,20 @@ class Param
 };
 
 typedef  std::map<std::string,Param> Params;
+typedef  std::map<std::string,Param> ParamMap;
 
 class Layer;
 class LayerFactory
 {
     public:
-        virtual Layer *create(Config config,std::string name)=0;
+        virtual Layer *create(ConfigMap configs,std::string name)=0;
 };
 
 
 class Layer{ 
     protected:
 
-        explicit Layer(Config _config,std::string _name);
+        explicit Layer(ConfigMap _configs,std::string _name);
 
         void add_param(std::string name, size_t rows, size_t cols);
 
@@ -107,7 +108,7 @@ class Layer{
         std::vector<pData>& get_output(){return out_nodes;};
         std::vector<pData>& get_input(){return in_nodes;};
 
-        static Layer& create(const std::string &type, const Config _config, const std::string &name);
+        static Layer& create(const std::string &type, const ConfigMap _config, const std::string &name);
 
 
         Layer* load_param( std::string name,  Matrix value);
@@ -119,7 +120,7 @@ class Layer{
 
 
 
-        Config config;
+        ConfigMap configs;
 
         Params param;
 
@@ -154,49 +155,7 @@ struct ConfigsType{
     }
 };
 
-namespace{//internal
 
-
-void str2(const std::string& value1, int& value2)
-{
-        value2= atoi(value1.c_str());
-}
-void str2(const std::string& value1, size_t& value2)
-{
-        value2= atoi(value1.c_str());
-}
-void str2(const std::string& value1, float& value2)
-{
-        value2=atof(value1.c_str());
-}
-void str2(const std::string& value1, std::string& value2)
-{
-        value2=value1.c_str();
-}
-void str2(const std::string& value1, bool& value2)
-{
-        if(value1=="ture")
-            value2=true;
-        else if (value1=="false")
-            value2=false;
-}
-
-}// internal
-
-struct Config_
-{
-
-    template <typename T>
-    T get()
-    {
-        T tmp_value;
-        str2(value,tmp_value);
-        return  tmp_value;
-    }
-    std::string name;
-    std::string desc;
-    std::string value;
-};
 
 struct RegContent
 {
@@ -210,9 +169,11 @@ struct RegContent
         return *this;
     }
 
-    RegContent& add_config(std::string name)
+    template <typename T>
+    RegContent& add_config(std::string name,std::string desc, T default_value)
     {
-        configs.add(name);
+        configs[name];
+        configs[name].set(name,desc,default_value);
         return *this;
     }
 
@@ -222,14 +183,10 @@ struct RegContent
         return *this;
     }
 
-
-    
-    typedef std::map<std::string,Config> Confmap;
-    //typedef std::map<std::string,Param> Parammap;
     typedef std::map<std::string,std::string> Parammap;
 
     LayerFactory* factory;
-    Config configs;
+    ConfigMap configs;
     Parammap params;
 
 };
@@ -271,7 +228,7 @@ template <typename T>
 class Factory:public LayerFactory
 {
     public:
-        Layer* create(Config config,std::string name)
+        virtual Layer* create(ConfigMap config,std::string name)
         {
             return new T(config,name);
         }

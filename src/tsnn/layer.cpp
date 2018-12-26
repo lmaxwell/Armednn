@@ -32,7 +32,7 @@ void Layer::register_config(const std::string& layer_name, const std::string& co
 */
 /*=============================*/
 
-Layer::Layer(Config _config,std::string _name):config(_config),name(_name)
+Layer::Layer(ConfigMap _configs,std::string _name):configs(_configs),name(_name)
 {
 
 }
@@ -51,6 +51,7 @@ std::vector<pData>& Layer::operator()(std::vector<pData> inputs)
 
 bool has_config(const std::string name, const std::string type)
 {
+    /*
     std::set<std::string>::iterator ite=ConfigsType::get()[type].find(name);
     if(ite==ConfigsType::get()[type].end())
     {
@@ -60,9 +61,11 @@ bool has_config(const std::string name, const std::string type)
     {
         return true;
     }
+    */
+    return true;
 }
 
-Layer& Layer::create(const std::string &type, Config _config, const std::string &name)
+Layer& Layer::create(const std::string &type,const ConfigMap _configs, const std::string &name)
 {
 
     auto ite=Registry::get().regcont.find(type);
@@ -73,6 +76,15 @@ Layer& Layer::create(const std::string &type, Config _config, const std::string 
     }
     else
     {
+         
+        ConfigMap regit=Registry::get().get_layer(type).configs;
+
+        for(auto it=_configs.begin();it!=_configs.end();it++)
+        {
+            if(regit[it->first].set(it->second.value))
+            {
+            }
+        }
         /*
         for(auto it=_config.getall().begin();it!=_config.getall().end();it++)
         {
@@ -84,7 +96,7 @@ Layer& Layer::create(const std::string &type, Config _config, const std::string 
             CHECK(_config.has(*it))<<"config:\""<<*it<<"\" in "<<type<<" is not set!";
         }
         */
-        Layer* layer= Registry::get().get_layer(type).factory->create(_config,name);
+        Layer* layer= Registry::get().get_layer(type).factory->create(regit,name);
         layer->type=type;
         INFO<<"adrress of "<<name<<":"<<layer;
         return *layer;
@@ -97,8 +109,10 @@ Layer& Layer::create(const std::string &type, Config _config, const std::string 
 template <typename T>
 T Layer::get_config(const std::string& name)
 {
-    CHECK(config.has(name))<<"no config:"<<name;
-    return config.get<T>(name);
+    //CHECK(config.has(name))<<"no config:"<<name;
+    T tmp;
+    CHECK(configs[name].get<T>(tmp))<<"failed to get config: "<<name;;
+    return tmp;
 }
 
 template size_t Layer::get_config<size_t>(const std::string&);
@@ -111,7 +125,7 @@ Layer* Layer::set_config(const std::string name,const std::string value)
 {
 
     CHECK(has_config(name,type))<<"no config:"<<name<<" in "<<type;
-    config.set(name,value);
+    //config.set(name,value);
     return this;
 }
 
@@ -135,6 +149,7 @@ Layer* Layer::add_output()
     node->from=this;
     node->name=name+"["+std::to_string(out_nodes.size())+"]";
     out_nodes.push_back(node);
+    return this;
 }
 
 void Layer::add_param( std::string name,size_t rows,size_t cols)

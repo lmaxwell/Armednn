@@ -4,57 +4,289 @@
 #include <string>
 #include <iostream>
 #include <map>
-#include <initializer_list>
+#include <typeinfo>
 namespace Tsnn
 {
-class Config{
-    public:
-        Config(){};
+
+struct ConfigValue;
+template <typename T>
+T config_cast(ConfigValue&);
+
+//any liki container, used to store config value
+struct ConfigValue
+{
+    
+    ConfigValue()=default;
+
+    //constructor
+    template <typename T>
+    ConfigValue(T _value):base(new Store<T>(_value))
+    {
+        //std::cout<<"CTOR"<<std::endl;
+    }
+
+
+    ~ConfigValue()
+    {
+        //std::cout<<"DTOR"<<std::endl;
+        if(base!=nullptr)
+        {
+
+            delete base;
+            base=nullptr;
+        }
+    }
+
+    //move constructor
+    ConfigValue(ConfigValue&& other)
+    {
+        //std::cout<<"MOVE CTOR"<<std::endl;
+        base=other.base;
+        other.base=nullptr;
+    }
+
+    //copy constructor
+    ConfigValue(const ConfigValue& other)
+    {
+        //std::cout<<"COPY CTOR"<<std::endl;
+        base=other.base->copy();
+    }
+
+
+    //move assignment
+    ConfigValue& operator=(ConfigValue&& other)=delete;
+    /*
+    {
+        std::cout<<"MOVE ASSIGN"<<std::endl;
+        if(base!=nullptr)
+        {
+            delete base;
+        }
+        base=other.base;
+        other.base=nullptr;
+    }
+    */
+
+    ConfigValue& operator=(const ConfigValue& other)=delete;
+    /*
+    {
+        std::cout<<"COPY ASSIGN"<<std::endl;
+        if(base!=nullptr)
+            delete base;
+        base=other.base->copy();
+        return *this;
+    }
+    */
+
+
+
+
+
+    struct StoreBase{
         
-        //Config(std::initializer_list<std::pair<std::string,std::string> > _configs):configs(_configs)  
-        //not work
-        //Config(std::initializer_list<std::pair<const std::string, const std::string> > _configs):configs(_configs)  
-        //not work
-        //https://cplusplus.github.io/LWG/issue3025
+        virtual StoreBase* copy()=0;
+        virtual ~StoreBase(){}
+    };
 
-        Config(std::initializer_list<std::pair<const std::string, std::string> > _configs):configs(_configs)
+
+    template <typename T>
+    struct Store:public StoreBase
+    {
+        Store(T _value):value(_value)
         {
         }
-
-        //Config(std::map<std::string,std::string>  _configs):configs(_configs){};
-
-        //Config(std::pair<std::string,std::string> _configs){configs.insert(_configs);};
-
-        /*
-        Config(const Config &other)
+        StoreBase* copy()
         {
-            configs=other.configs;
+            return new Store(value);
         }
 
-        */
+
+        T value;
+        virtual ~Store(){}
+    };
 
 
-        void set(std::string name,std::string value);
 
-        void add(std::string name);
-
-        bool has(std::string name);
-
-        std::map<std::string,std::string>& getall()
+    template <typename T>
+    bool get(T &_value)
+    {
+        ConfigValue::Store<T>* tmp=dynamic_cast<ConfigValue::Store<T>*>(base);
+        if(tmp==nullptr)
         {
-            return configs;
+            std::cout<<"wrong type! cannot get value, check type for this config"<<std::endl;
+            return false;
+        }
+        _value= tmp->value;
+        return true;
+    }
+
+    bool set(ConfigValue other)
+    {
+
+        if(base==nullptr)
+        {
+            base=other.base->copy();
+            return true;
         }
 
-        template <typename T>
-        T get(const std::string& name);
+        if (typeid(*base)==typeid(*(other.base)))
+        {
+            delete base;
+            base=other.base->copy();
+            return true;
+        }
 
-    private:
-        std::map<std::string, std::string> configs;
-        void str2(const std::string&, int&);
-        void str2(const std::string&, size_t&);
-        void str2(const std::string&, float&);
-        void str2(const std::string&, std::string&);
+        std::cout<<"you provide wrong type!"<<std::endl;
+        return false;
+    }
+
+    template <typename T>
+    bool set(T _value)
+    {
+
+        if(base==nullptr)
+        {
+            base=new Store<T>(_value);
+            return true;
+        }
+
+        Store<T>* tmp=dynamic_cast<ConfigValue::Store<T>*>(base);
+        if(tmp==nullptr)
+        {
+            std::cout<<"wrong type! cannot set value, check type for this config"<<std::endl;
+            return false;
+        }
+        tmp->value=_value;
+        return true;
+    }
+
+    StoreBase *base=nullptr;
 };
+
+
+template <typename T>
+T config_cast(ConfigValue& c)
+{
+    ConfigValue::Store<T>* tmp=dynamic_cast<ConfigValue::Store<T>*>(c.base);
+    if(tmp==nullptr)
+    {
+        std::cout<<"wrong type! cannot get value"<<std::endl;
+    }
+    return tmp->value;
 }
+
+
+struct Config
+{
+    Config()=default;
+
+    //proto
+    template <typename T>
+    Config(std::string _name,std::string _desc,T _value):name(_name),desc(_desc),value(_value){}
+
+    /*
+    //user input
+    template <typename T>
+    Config(T&& _value):value(std::forward<T>(_value)){
+        std::cout<<"only value constructor"<<std::endl;
+    }
+    */
+
+    //user input
+    template <typename T>
+    Config(T _value):value(_value){
+        //std::cout<<"only value constructor"<<std::endl;
+    }
+
+    Config(const Config& other)
+    {
+        //std::cout<<"copy ctor"<<std::endl;
+        name=other.name;
+        desc=other.desc;
+        value.set(other.value);
+    }
+    Config(Config&& other)
+    {
+        //std::cout<<"move ctor"<<std::endl;
+        name=std::move(other.name);
+        desc=std::move(other.desc);
+        value.set(std::move(other.value));
+    }
+
+    Config& operator=(const Config&)=default;
+    Config& operator=(Config&&)=default;
+
+    bool set(ConfigValue _value)
+    {
+        if(value.set(_value))
+        {
+            return true;
+        }
+        else
+        {
+            //std::cout<<"name:"<<name<<"\tdesc:"<<desc<<std::endl;
+            return false;
+        }
+    }
+    template <typename T>
+    bool set(T _value)
+    {
+        if(value.set(_value))
+        {
+            return true;
+        }
+        else
+        {
+            //std::cout<<"name:"<<name<<"\tdesc:"<<desc<<std::endl;
+            return false;
+        }
+    }
+
+    template <typename T>
+    bool set(std::string _name,std::string _desc,T _value)
+    {
+        name=_name;
+        desc=_desc;
+        if(value.set(_value))
+        {
+            return true;
+        }
+        else
+        {
+            //std::cout<<"name:"<<name<<"\tdesc:"<<desc<<std::endl;
+            return false;
+        }
+    }
+
+
+    template <typename T>
+    bool get(T& _value)
+    {
+      if(value.get<T>(_value))
+      {
+          return true;
+      }
+      else
+      {
+          //std::cout<<"name:"<<name<<"\tdesc:"<<desc<<std::endl;
+          return false;
+      }
+      
+    }
+
+
+    std::string name;
+    std::string desc;
+    ConfigValue value;
+};
+
+typedef std::map<std::string,Config> ConfigMap;
+
+
+
+bool config_has_key(ConfigMap& configs,std::string& name);
+bool config_compare_key(ConfigMap& a ,ConfigMap &b);
+
+}// namespace Tsnn
 
 #endif
