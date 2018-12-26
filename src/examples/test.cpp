@@ -26,14 +26,14 @@ class MyNet:public Network
 
             std::string s="tanh";
 
-            auto x=Layer::create("Dense",
+            auto x=create("Dense",
                                  {{"activation",s},{"dim0",(size_t)10},{"dim1",(size_t)10}},
                                  "Dense-0")(xx);
 
-            auto y=Layer::create("Split",{{"num_split",(size_t)2}},"Split-0")(x);
+            auto y=create("Split",{{"num_split",(size_t)2}},"Split-0")(x);
 
-            y=Layer::create("Dense",
-                            {{"activation","tanh"},{"dim0",(size_t)5},{"dim1",(size_t)5}},
+            y=create("Dense",
+                            {{"activation",(std::string)"tanh"},{"dim0",(size_t)5},{"dim1",(size_t)5}},
                             "Dense-1")({y[0]});
 
             Output(y);
@@ -60,6 +60,7 @@ int main()
 
     Tsnn::LogMessage::enable(true);
 
+    INFO<<Registry::get().get_layer("Concat")._doc;
 
     MyNet *net=new MyNet();
     
@@ -81,11 +82,11 @@ int main()
             auto start=std::chrono::system_clock::now();
             INFO<<k<<"-th run:";
             net->feed({Matrix::Random(num,10)})->compute();
-            INFO<<"input:"<<endl<<net->get_input()[0]->get_value<Matrix>();;
+            INFO<<"input:"<<endl<<net->get_input()[0]->get_value();;
             for(int i=0;i<net->get_output().size();i++)
             {
                 INFO<<i<<"-th output:"<<net->get_output()[i]->name<<endl
-                    <<net->get_output()[i]->get_value<Matrix>()<<endl;
+                    <<net->get_output()[i]->get_value()<<endl;
             }
             auto end=std::chrono::system_clock::now();
             auto duration=std::chrono::duration_cast<std::chrono::microseconds>(end-start);
@@ -93,7 +94,7 @@ int main()
             INFO<<"COST "<<double(duration.count()) * std::chrono::microseconds::period::num / std::chrono::microseconds::period::den;
         }
     }
-    //INFO<<"input:"<<endl<<input->get_value<Matrix>();;
+    //INFO<<"input:"<<endl<<input->get_value();;
     std::cout<<sizeof(MyNet)<<std::endl;
     std::cout<<sizeof(Layer)<<std::endl;
 

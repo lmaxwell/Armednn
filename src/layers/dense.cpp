@@ -19,15 +19,15 @@ void Dense::prepare()
 void Dense::inference()
 {
 
-    //Eigen::Map<Matrix> weight=get_param<Matrix>("weight");
-    //Matrix weight=get_param<Matrix>("weight");
-    //Vector& bias=Eigen::Map<Vector>(get_param<Matrix>("bias").data(),1,get_param<Matrix>("bias").cols());
+    //Eigen::Map weight=get_param("weight");
+    //Matrix weight=get_param("weight");
+    //Vector& bias=Eigen::Map<Vector>(get_param("bias").data(),1,get_param("bias").cols());
     //Vector bias=get_param<Vector>("bias");
 
 
 
     /*
-    Matrix in_mat=get_input()[0]->get_value<Matrix>(); // 1st copy, copy from input, allocate matrix "in_mat"
+    Matrix in_mat=get_input()[0]->get_value(); // 1st copy, copy from input, allocate matrix "in_mat"
 
     Matrix mat(in_mat.rows(),dims);  // allocate a matrix "mat"
     mat.noalias()=in_mat*weight;
@@ -38,10 +38,10 @@ void Dense::inference()
     */
 
     //avoid copy 
-    Matrix& in_mat=get_input()[0]->get_value<Matrix>(); // use reference, no copy here
-    //std::cout<<"return side:"<<&(get_input()[0]->get_value<Matrix>())<<" "<<&in_mat<<std::endl;   
+    Matrix& in_mat=get_input()[0]->get_value(); // use reference, no copy here
+    //std::cout<<"return side:"<<&(get_input()[0]->get_value())<<" "<<&in_mat<<std::endl;   
 
-    Matrix& mat=get_output()[0]->get_value<Matrix>(); 
+    Matrix& mat=get_output()[0]->get_value(); 
 
     mat.resize(in_mat.rows(),dim1); // use resize() to reallocate memory
 

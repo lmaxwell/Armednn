@@ -283,7 +283,6 @@ struct Config
 typedef std::map<std::string,Config> ConfigMap;
 
 
-
 bool config_has_key(ConfigMap& configs,std::string& name);
 bool config_compare_key(ConfigMap& a ,ConfigMap &b);
 

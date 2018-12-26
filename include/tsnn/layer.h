@@ -50,12 +50,6 @@ class Param
 typedef  std::map<std::string,Param> Params;
 typedef  std::map<std::string,Param> ParamMap;
 
-class Layer;
-class LayerFactory
-{
-    public:
-        virtual Layer *create(ConfigMap configs,std::string name)=0;
-};
 
 
 class Layer{ 
@@ -72,11 +66,10 @@ class Layer{
             num_input=num;
         }
 
-        template <typename T>
         void set_num_output(size_t num)
         {
             for(int i=0;i<num;i++)
-                add_output<T>();
+                add_output();
             num_output=num;
         }
 
@@ -108,8 +101,6 @@ class Layer{
         std::vector<pData>& get_output(){return out_nodes;};
         std::vector<pData>& get_input(){return in_nodes;};
 
-        static Layer& create(const std::string &type, const ConfigMap _config, const std::string &name);
-
 
         Layer* load_param( std::string name,  Matrix value);
 
@@ -126,34 +117,24 @@ class Layer{
 
         size_t num_input;
         size_t num_output;
-        //input nodes of the layer
+
         std::vector<pData> in_nodes;
-        //output nodes of the layer
+
         std::vector<pData> out_nodes;
 
-        template <typename T>
         Layer* add_output();
 
 };
 
+class LayerFactory
+{
+    public:
+        virtual Layer *create(ConfigMap configs,std::string name)=0;
+};
+
 typedef std::map<std::string,LayerFactory*> Fmap;  
 typedef std::map<std::string,std::set<std::string>> Confmap;
-//typedef std::map<std::string,Param> Parammap;
 typedef std::map<std::string,std::string> Parammap;
-
-struct Factories{
-    static Fmap &get(){
-        static Fmap factories;
-        return factories;
-    }
-};
-
-struct ConfigsType{
-    static Confmap &get(){
-        static Confmap configs_type;
-        return configs_type;
-    }
-};
 
 
 
@@ -170,10 +151,17 @@ struct RegContent
     }
 
     template <typename T>
-    RegContent& add_config(std::string name,std::string desc, T default_value)
+    RegContent& add_config(std::string name,std::string desc)
     {
+        T *tmp=new T();
         configs[name];
-        configs[name].set(name,desc,default_value);
+        configs[name].set(name,desc,*tmp);
+        delete tmp;
+        return *this;
+    }
+    RegContent& doc(std::string __doc)
+    {
+        _doc=__doc;
         return *this;
     }
 
@@ -185,10 +173,10 @@ struct RegContent
 
     typedef std::map<std::string,std::string> Parammap;
 
+    std::string _doc;
     LayerFactory* factory;
     ConfigMap configs;
     Parammap params;
-
 };
 
 
@@ -221,8 +209,6 @@ struct Registry
 
 };
 
-//Layer::register_layer(#Type, this); 
-//
 
 template <typename T>
 class Factory:public LayerFactory
@@ -234,31 +220,14 @@ class Factory:public LayerFactory
         }
 };
 
+Layer& create(const std::string , const ConfigMap , const std::string );
+
 #define REGISTER_LAYER(Type) \
     static Factory<Type>  g_##Type##LayerFactory; \
     static RegContent reg##Type=Registry::get().set_layer(#Type).get_layer(#Type).set_factory(&( g_##Type##LayerFactory )) 
 
-/*
-#define REGISTER_LAYER(Type,ConfigNames) \
-    class Type##Factory : public LayerFactory { \
-        public: \
-                Type##Factory() \
-        { \
-            DEBUG<<"registering "<<#Type;\
-            DEBUG<<"register "<<#Type<<" done";\
-            Layer::register_config(#Type, #ConfigNames); \
-        } \
-        virtual Layer *create(Config _config,std::string name) { \
-            return new Type(_config,name); \
-        } \
-    }; \
-static Type##Factory global_##Type##Factory;\
-;
-//static RegContent reg##Type=Registry::get().set_layer(#Type).get_layer(#Type).set_factory(&global_##Type##Factory) 
-//static RegContent reg##Type=Registry::get().set_layer(#Type).get_layer(#Type).set_factory((LayerFactory*)(&global_##Type##Factory)) 
-*/
 
-}
+}//namespace Tsnn
 
 
 #endif

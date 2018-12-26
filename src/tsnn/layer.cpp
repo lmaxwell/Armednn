@@ -1,36 +1,6 @@
 #include "tsnn/layer.h"
 
 namespace Tsnn{
-/*=============================
- layer factories registery 
-*/
-
-    /*
-
-void Layer::register_layer(const std::string& name, LayerFactory *factory)
-{
-    Fmap::iterator ite=Factories::get().find(name);
-    if(ite==Factories::get().end())
-        Factories::get()[name]=factory;
-    else
-    {
-        //throw a exception
-        std::cout<<name<<" already registered!"<<std::endl;
-    }
-
-}
-
-void Layer::register_config(const std::string& layer_name, const std::string& config_names)
-{
-    std::stringstream ss(config_names);
-    std::string config_name;
-    while(ss>>config_name)
-    {
-        ConfigsType::get()[layer_name].insert(config_name);
-    }
-}
-*/
-/*=============================*/
 
 Layer::Layer(ConfigMap _configs,std::string _name):configs(_configs),name(_name)
 {
@@ -65,51 +35,13 @@ bool has_config(const std::string name, const std::string type)
     return true;
 }
 
-Layer& Layer::create(const std::string &type,const ConfigMap _configs, const std::string &name)
-{
-
-    auto ite=Registry::get().regcont.find(type);
-    if(ite==Registry::get().regcont.end())
-    {
-        std::cout<<type<<" not implemented!"<<std::endl;
-        exit(1);
-    }
-    else
-    {
-         
-        ConfigMap regit=Registry::get().get_layer(type).configs;
-
-        for(auto it=_configs.begin();it!=_configs.end();it++)
-        {
-            if(regit[it->first].set(it->second.value))
-            {
-            }
-        }
-        /*
-        for(auto it=_config.getall().begin();it!=_config.getall().end();it++)
-        {
-            
-            CHECK(has_config(it->first,type))<<"no config:\""<<it->first<<"\" in "<<type<<"!";
-        }
-        for(auto it=ConfigsType::get()[type].begin();it!=ConfigsType::get()[type].end();it++)
-        {
-            CHECK(_config.has(*it))<<"config:\""<<*it<<"\" in "<<type<<" is not set!";
-        }
-        */
-        Layer* layer= Registry::get().get_layer(type).factory->create(regit,name);
-        layer->type=type;
-        INFO<<"adrress of "<<name<<":"<<layer;
-        return *layer;
-    }
-}
-
 
 
 
 template <typename T>
 T Layer::get_config(const std::string& name)
 {
-    //CHECK(config.has(name))<<"no config:"<<name;
+    //TODO CHECK(
     T tmp;
     CHECK(configs[name].get<T>(tmp))<<"failed to get config: "<<name;;
     return tmp;
@@ -124,8 +56,7 @@ template std::string Layer::get_config<std::string>(const std::string&);
 Layer* Layer::set_config(const std::string name,const std::string value)
 {
 
-    CHECK(has_config(name,type))<<"no config:"<<name<<" in "<<type;
-    //config.set(name,value);
+    //To do CHECK 
     return this;
 }
 
@@ -142,7 +73,6 @@ Layer* Layer::set_input(pData input)
 }
 
 
-template <typename T>
 Layer* Layer::add_output()
 {
     pData node=new Data();
@@ -179,16 +109,35 @@ Matrix& Layer::get_param(std::string name)
     return param[name].value;
 }
 
-/*
-Layer* Layer::load_param( std::string name, float* value)
+
+Layer& create(const std::string type,const ConfigMap _configs, const std::string name)
 {
-    param[name].load(value);
-    return this;
+
+    auto ite=Registry::get().regcont.find(type);
+    if(ite==Registry::get().regcont.end())
+    {
+        std::cout<<type<<" not implemented!"<<std::endl;
+        exit(1);
+    }
+    else
+    {
+         
+        //CHECK KEY
+        ConfigMap regit=Registry::get().get_layer(type).configs;
+
+        for(auto it=_configs.begin();it!=_configs.end();it++)
+        {
+            if(regit[it->first].set(it->second.value))
+            {
+                //CHECK VALUE TYPE
+            }
+        }
+
+        Layer* layer= Registry::get().get_layer(type).factory->create(regit,name);
+        layer->type=type;
+        return *layer;
+    }
 }
-*/
 
 
-template Layer* Layer::add_output<std::string>();
-template Layer* Layer::add_output<Matrix>();
-
-}
+}//namespace Tsnn

@@ -20,18 +20,10 @@ class Data
         Data(){};
         Data(string _name):name(_name){};
 
-        template <typename T>
         Matrix& get_value() 
         {
             return value;
         }
-
-        /*
-        Matrix& get_value() 
-        {
-            return value
-        }
-        */
 
         std::string name;
         Layer* from=nullptr;

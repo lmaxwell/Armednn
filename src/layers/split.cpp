@@ -11,7 +11,7 @@ void Split::prepare()
 
 void Split::inference()
 {
-    Matrix &input_mat=get_input()[0]->get_value<Matrix>();
+    Matrix &input_mat=get_input()[0]->get_value();
 
 
     size_t out_channels=size_t(input_mat.cols()/num_split);

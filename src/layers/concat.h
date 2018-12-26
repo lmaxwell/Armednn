@@ -16,7 +16,7 @@ class Concat: public Layer{
             Concat(ConfigMap configs,std::string name):Layer(configs,name)
             {
                 set_num_input(get_config<size_t>("num_input"));
-                set_num_output<Matrix>(1);
+                set_num_output(1);
             }
 
             size_t num_input;
@@ -24,8 +24,8 @@ class Concat: public Layer{
             void prepare();
 };
 
-//REGISTER_LAYER(Concat,num_input);//.add_config().add_param("null","for test");
-REGISTER_LAYER(Concat).add_config("num_input","number of inputs",(size_t)1);
+REGISTER_LAYER(Concat).doc("Concat: split channels along the last axis")
+                      .add_config<size_t>("num_input","number of inputs");
 
 }
 #endif
