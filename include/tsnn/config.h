@@ -9,7 +9,7 @@ namespace Tsnn
 {
 class Config{
     public:
-        //Config(){};
+        Config(){};
         
         //Config(std::initializer_list<std::pair<std::string,std::string> > _configs):configs(_configs)  
         //not work

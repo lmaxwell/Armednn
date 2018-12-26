@@ -94,6 +94,9 @@ int main()
         }
     }
     //INFO<<"input:"<<endl<<input->get_value<Matrix>();;
+    std::cout<<sizeof(MyNet)<<std::endl;
+    std::cout<<sizeof(Layer)<<std::endl;
+
     delete net;
     //delete input;
 }

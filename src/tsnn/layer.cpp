@@ -5,6 +5,7 @@ namespace Tsnn{
  layer factories registery 
 */
 
+    /*
 
 void Layer::register_layer(const std::string& name, LayerFactory *factory)
 {
@@ -28,6 +29,7 @@ void Layer::register_config(const std::string& layer_name, const std::string& co
         ConfigsType::get()[layer_name].insert(config_name);
     }
 }
+*/
 /*=============================*/
 
 Layer::Layer(Config _config,std::string _name):config(_config),name(_name)
@@ -63,15 +65,15 @@ bool has_config(const std::string name, const std::string type)
 Layer& Layer::create(const std::string &type, Config _config, const std::string &name)
 {
 
-    Fmap::iterator ite=Factories::get().find(type);
-    if(ite==Factories::get().end())
+    auto ite=Registry::get().regcont.find(type);
+    if(ite==Registry::get().regcont.end())
     {
-        //exception
         std::cout<<type<<" not implemented!"<<std::endl;
         exit(1);
     }
     else
     {
+        /*
         for(auto it=_config.getall().begin();it!=_config.getall().end();it++)
         {
             
@@ -81,7 +83,8 @@ Layer& Layer::create(const std::string &type, Config _config, const std::string 
         {
             CHECK(_config.has(*it))<<"config:\""<<*it<<"\" in "<<type<<" is not set!";
         }
-        Layer* layer= Factories::get()[type]->create(_config,name);
+        */
+        Layer* layer= Registry::get().get_layer(type).factory->create(_config,name);
         layer->type=type;
         INFO<<"adrress of "<<name<<":"<<layer;
         return *layer;

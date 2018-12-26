@@ -24,6 +24,7 @@ class Concat: public Layer{
             void prepare();
 };
 
-REGISTER_LAYER(Concat,num_input)
+//REGISTER_LAYER(Concat,num_input);//.add_config().add_param("null","for test");
+REGISTER_LAYER(Concat).add_config("test").add_param("null","for test");
 }
 #endif

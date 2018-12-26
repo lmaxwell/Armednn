@@ -28,7 +28,8 @@ class Split: public Layer{
             
 };
 
-REGISTER_LAYER(Split,num_split)
+//REGISTER_LAYER(Split,num_split);
+REGISTER_LAYER(Split);
 
 }
 #endif
