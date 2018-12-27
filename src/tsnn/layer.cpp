@@ -19,46 +19,17 @@ std::vector<pData>& Layer::operator()(std::vector<pData> inputs)
     return out_nodes;
 }
 
-bool has_config(const std::string name, const std::string type)
-{
-    /*
-    std::set<std::string>::iterator ite=ConfigsType::get()[type].find(name);
-    if(ite==ConfigsType::get()[type].end())
-    {
-        return false;
-    }
-    else
-    {
-        return true;
-    }
-    */
-    return true;
-}
 
 
 
-
-template <typename T>
-T Layer::get_config(const std::string& name)
-{
-    //TODO CHECK(
-    T tmp;
-    CHECK(configs[name].get<T>(tmp))<<"failed to get config: "<<name;;
-    return tmp;
-}
-
-template size_t Layer::get_config<size_t>(const std::string&);
-template int Layer::get_config<int>(const std::string&);
-template float Layer::get_config<float>(const std::string&);
-template std::string Layer::get_config<std::string>(const std::string&);
-
-
+/*
 Layer* Layer::set_config(const std::string name,const std::string value)
 {
 
     //To do CHECK 
     return this;
 }
+*/
 
 Layer* Layer::set_input(std::vector<pData> inputs)
 {
@@ -82,15 +53,15 @@ Layer* Layer::add_output()
     return this;
 }
 
-void Layer::add_param( std::string name,size_t rows,size_t cols)
+void Layer::add_param( std::string name,size_t rows, size_t cols)
 {
-    param[name]=Param(name,rows,cols);
+    params[name]=Param(name,rows,cols);
 }
 
 bool Layer::has_param(std::string name)
 {
-    auto it=param.find(name);
-    if(it==param.end())
+    auto it=params.find(name);
+    if(it==params.end())
         return false;
     else
         return true;
@@ -99,18 +70,18 @@ bool Layer::has_param(std::string name)
 Layer* Layer::load_param( std::string name,  Matrix value)
 {
     CHECK(has_param(name))<<"no param:\""<<name<<"\""<<" in \""<<type<<"\"!";
-    param[name].load(value);
+    params[name].load(value);
     return this;
 }
 
 Matrix& Layer::get_param(std::string name)
 {
     CHECK(has_param(name))<<"no param:\""<<name<<"\""<<" in \""<<type<<"\"!";
-    return param[name].value;
+    return params[name].value;
 }
 
 
-Layer& create(const std::string type,const ConfigMap _configs, const std::string name)
+Layer& Layer::create(const std::string type,const ConfigMap _configs, const std::string name)
 {
 
     auto ite=Registry::get().regcont.find(type);
@@ -122,19 +93,32 @@ Layer& create(const std::string type,const ConfigMap _configs, const std::string
     else
     {
          
-        //CHECK KEY
-        ConfigMap regit=Registry::get().get_layer(type).configs;
+        ConfigMap regit_configs=Registry::get().get_layer(type).configs;
 
-        for(auto it=_configs.begin();it!=_configs.end();it++)
+        CHECK(config_compare_key(regit_configs,_configs))<<"config key not match";
+        CHECK(config_compare_type(regit_configs,_configs))<<"config type not match";
+
+        ParamMap params=Registry::get().get_layer(type).params;
+
+        for(auto it=params.begin();it!=params.end();it++)
         {
-            if(regit[it->first].set(it->second.value))
+            if (it->second.shape_mapping.size()>0)
             {
-                //CHECK VALUE TYPE
+                params[it->first].shape=ShapeMapping(it->second.shape_mapping)(const_cast<ConfigMap&>(_configs));
             }
         }
 
-        Layer* layer= Registry::get().get_layer(type).factory->create(regit,name);
+        Layer* layer= Registry::get().get_layer(type).factory->create(_configs,name);
+
         layer->type=type;
+
+        layer->params=params;
+
+        std::string num_input=Registry::get().get_layer(type).num_input;
+        std::string num_output=Registry::get().get_layer(type).num_output;
+        layer->set_num_input(InOutMapping(num_input)(const_cast<ConfigMap&>(_configs)));
+        layer->set_num_output(InOutMapping(num_output)(const_cast<ConfigMap&>(_configs)));
+
         return *layer;
     }
 }

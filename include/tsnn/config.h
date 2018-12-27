@@ -12,7 +12,7 @@ struct ConfigValue;
 template <typename T>
 T config_cast(ConfigValue&);
 
-//any liki container, used to store config value
+//any like container, used to store variable value
 struct ConfigValue
 {
     
@@ -283,8 +283,10 @@ struct Config
 typedef std::map<std::string,Config> ConfigMap;
 
 
-bool config_has_key(ConfigMap& configs,std::string& name);
-bool config_compare_key(ConfigMap& a ,ConfigMap &b);
+bool config_has_key(const ConfigMap& configs,std::string& name);
+bool config_compare_key(const ConfigMap& a ,const ConfigMap &b);
+bool config_compare_type(const ConfigMap& a ,const ConfigMap &b);
+
 
 }// namespace Tsnn
 

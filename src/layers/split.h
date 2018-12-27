@@ -15,8 +15,6 @@ class Split: public Layer{
     public:
             Split(ConfigMap configs,std::string name):Layer(configs,name)
             {
-                set_num_input(1);
-                set_num_output(get_config<size_t>("num_split"));
             }
 
             size_t num_split;
@@ -28,8 +26,10 @@ class Split: public Layer{
             
 };
 
-//REGISTER_LAYER(Split,num_split);
-REGISTER_LAYER(Split).add_config<size_t>("num_split","number of split outputs, only support along last dim");
+REGISTER_LAYER(Split).add_config<size_t>("num_split","number of split outputs, only support along last dim")
+                     .set_num_input("1")
+                     .set_num_output("num_split");
+
 
 }
 #endif

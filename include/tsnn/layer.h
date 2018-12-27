@@ -10,49 +10,49 @@
 #include <iostream>
 #include <functional>
 
+#include "tsnn/core.h"
 #include "tsnn/data.h"
 #include "tsnn/config.h"
-#include "tsnn/core.h"
+#include "tsnn/param.h"
 
 
 namespace Tsnn{
 
-class Param
+
+
+/*
+struct LayerProp
 {
-    public:
-        Param(){};
-
-        Param(std::string _name,size_t _rows,size_t _cols):name(_name),rows(_rows),cols(_cols){};
-
-        std::string name;
-
-        size_t rows;
-        size_t cols;
-
-        Matrix value;
-
-        void load(Matrix _value)
-        {
-            CHECK(_value.rows()==rows && _value.cols()==cols)<<"loading Matrix has wrong dimension";
-            value=_value;
-
-        }
-
-        void load(Vector _value)
-        {
-            CHECK(_value.rows()==rows && _value.cols()==cols)<<"loading Matrix has wrong dimension";
-            value=_value;
-        }
-
-
+    LayerProp():num_input(-1),num_output(-1){}
+    LayerProp(ConfigMap _configs, ParamMap _params):configs(_configs),params(_params),num_input(-1),num_output(-1){}
+    ConfigMap configs;
+    ParamMap  params;
+    size_t num_input;
+    size_t num_output;
 };
-
-typedef  std::map<std::string,Param> Params;
-typedef  std::map<std::string,Param> ParamMap;
-
-
+*/
 
 class Layer{ 
+
+    private:
+
+        /*
+        LayerProp prop;
+        */
+
+        ConfigMap configs;
+
+        ParamMap params;
+
+        size_t num_input;
+        size_t num_output;
+
+        std::vector<pData> in_nodes;
+
+        std::vector<pData> out_nodes;
+
+        Layer* add_output();
+
     protected:
 
         explicit Layer(ConfigMap _configs,std::string _name);
@@ -68,7 +68,7 @@ class Layer{
 
         void set_num_output(size_t num)
         {
-            for(int i=0;i<num;i++)
+            for(size_t  i=0;i<num;i++)
                 add_output();
             num_output=num;
         }
@@ -94,9 +94,7 @@ class Layer{
         Layer* set_input(pData input);
 
         template <typename T>
-
-        T get_config(const std::string& name);
-        Layer* set_config(const std::string name,const std::string value);
+        bool get_config(const std::string& name, T& value);
 
         std::vector<pData>& get_output(){return out_nodes;};
         std::vector<pData>& get_input(){return in_nodes;};
@@ -105,26 +103,18 @@ class Layer{
         Layer* load_param( std::string name,  Matrix value);
 
         Matrix& get_param(std::string name);
+
+        static Layer& create(const std::string , const ConfigMap , const std::string );
         
 
-    private:
-
-
-
-        ConfigMap configs;
-
-        Params param;
-
-        size_t num_input;
-        size_t num_output;
-
-        std::vector<pData> in_nodes;
-
-        std::vector<pData> out_nodes;
-
-        Layer* add_output();
 
 };
+
+template <typename T>
+bool Layer::get_config(const std::string& name, T& value)
+{
+    return configs[name].get<T>(value);
+}
 
 class LayerFactory
 {
@@ -132,21 +122,44 @@ class LayerFactory
         virtual Layer *create(ConfigMap configs,std::string name)=0;
 };
 
-typedef std::map<std::string,LayerFactory*> Fmap;  
-typedef std::map<std::string,std::set<std::string>> Confmap;
 typedef std::map<std::string,std::string> Parammap;
 
 
+struct InOutMapping
+{
+    std::string name;
+    InOutMapping(std::string _name):name(_name){}
+    size_t operator()(ConfigMap& configs)
+    {
+            if(configs.find(name)!=configs.end())
+            {
+                size_t tmp;
+                CHECK(configs[name].get<size_t>(tmp))<<"InputMapping name" <<name<<" must be type size_t";
+                return tmp;
+            }
+            else
+            {
+                return (size_t) atoi(name.c_str());
+            }
+    }
+};
 
 struct RegContent
 {
 
-    std::string name;
 
+    RegContent():num_input("?"),num_output("?"){}
+    std::string name;
 
     RegContent& set_factory(LayerFactory *_f)
     {
         factory=_f;
+        return *this;
+    }
+
+    RegContent& doc(std::string __doc)
+    {
+        _doc=__doc;
         return *this;
     }
 
@@ -159,24 +172,32 @@ struct RegContent
         delete tmp;
         return *this;
     }
-    RegContent& doc(std::string __doc)
+
+    RegContent& add_param(std::string name, std::vector<string> shape_mapping=std::vector<string>())
     {
-        _doc=__doc;
+        params[name]=Param(name,shape_mapping);
         return *this;
     }
 
-    RegContent& add_param(std::string name,std::string desc)
+    RegContent& set_num_input(std::string _num_input)
     {
-        params[name]=desc;
+        num_input=_num_input;
         return *this;
     }
 
-    typedef std::map<std::string,std::string> Parammap;
+    RegContent& set_num_output(std::string _num_output)
+    {
+        num_output=_num_output;
+        return *this;
+    }
 
     std::string _doc;
     LayerFactory* factory;
     ConfigMap configs;
-    Parammap params;
+    ParamMap params;
+    std::string num_input;
+    std::string num_output;
+
 };
 
 
@@ -219,8 +240,6 @@ class Factory:public LayerFactory
             return new T(config,name);
         }
 };
-
-Layer& create(const std::string , const ConfigMap , const std::string );
 
 #define REGISTER_LAYER(Type) \
     static Factory<Type>  g_##Type##LayerFactory; \

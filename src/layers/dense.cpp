@@ -10,9 +10,10 @@ void Dense::prepare()
 {
     weight=get_param("weight");
     bias=get_param("bias");
-    dim0=get_config<size_t>("dim0");
-    dim1=get_config<size_t>("dim1");
-    activation=get_config<std::string>("activation");
+
+    CHECK(get_config("dim0",dim0))<<"failed to get config dim0";
+    CHECK(get_config("dim1",dim1))<<"failed to get config dim1";
+    CHECK(get_config("activation",activation))<<"failed to get config activation";
 }
 
 

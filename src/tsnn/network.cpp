@@ -17,7 +17,7 @@ Network* Network::bind(std::vector<pData> _in_nodes,std::vector<pData> _out_node
     in_nodes=_in_nodes;
     out_nodes=_out_nodes;
 
-    for(int i=0;i<out_nodes.size();i++)
+    for(size_t i=0;i<out_nodes.size();i++)
     {
         iterate_layers(out_nodes[i]);
     }
@@ -29,7 +29,7 @@ Network* Network::bind(std::vector<pData> _in_nodes,std::vector<pData> _out_node
 
 Network* Network::feed(const std::vector<Matrix> &data)
 {
-    for(int i=0;i<in_nodes.size();i++)
+    for(size_t i=0;i<in_nodes.size();i++)
     {
         in_nodes[i]->set_value(data[i]);
     }
@@ -49,7 +49,7 @@ void Network::Output(std::vector<pData> outs)
 {
     out_nodes=outs;
 
-    for(int i=0;i<out_nodes.size();i++)
+    for(size_t i=0;i<out_nodes.size();i++)
     {
         iterate_layers(out_nodes[i]);
     }
@@ -97,7 +97,7 @@ void Network::iterate_layers(pData node)
         return;
     }
 
-    for(int i=0;i<from->get_input().size();i++)
+    for(size_t i=0;i<from->get_input().size();i++)
     {
         iterate_layers(from->get_input()[i]);
     }
@@ -113,14 +113,14 @@ void Network::print()
     {
         std::string temp=(*it)->name;
         temp+="\t{ ";
-        for(int i=0;i<(*it)->get_output().size();i++)
+        for(size_t  i=0;i<(*it)->get_output().size();i++)
         {
             temp+=(*it)->get_output()[i]->name;
             if(i!=(*it)->get_output().size()-1)
                 temp+=" ";
         }
         temp+=" }\t{ ";
-        for(int i=0;i<(*it)->get_input().size();i++)
+        for(size_t  i=0;i<(*it)->get_input().size();i++)
         {
             temp+=(*it)->get_input()[i]->name;
             if(i!=(*it)->get_input().size()-1)
@@ -130,7 +130,7 @@ void Network::print()
         std::cout<<temp<<std::endl;
     }
     std::string temp="OUTPUT:\t";
-    for(int i=0;i<out_nodes.size();i++)
+    for(size_t  i=0;i<out_nodes.size();i++)
     {
         temp+=out_nodes[i]->name;
         if(i!=out_nodes.size()-1)

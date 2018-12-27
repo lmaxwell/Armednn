@@ -6,7 +6,8 @@ namespace Tsnn{
 
 void Concat::prepare()
 {
-    num_input=get_config<size_t>("num_input");
+    CHECK(get_config("num_input",num_input));
+
 }
 
 void Concat::inference()
