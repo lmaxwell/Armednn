@@ -75,7 +75,6 @@ class Layer{
 
 
     public:
-
         
         virtual ~Layer();
 
@@ -105,8 +104,6 @@ class Layer{
         Matrix& get_param(std::string name);
 
         static Layer& create(const std::string , const ConfigMap , const std::string );
-        
-
 
 };
 
@@ -131,6 +128,8 @@ struct InOutMapping
     InOutMapping(std::string _name):name(_name){}
     size_t operator()(ConfigMap& configs)
     {
+            if (name=="?")
+                return 0;
             if(configs.find(name)!=configs.end())
             {
                 size_t tmp;
