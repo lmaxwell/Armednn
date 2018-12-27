@@ -205,6 +205,7 @@ struct Config
         desc=other.desc;
         value.set(other.value);
     }
+
     Config(Config&& other)
     {
         //std::cout<<"move ctor"<<std::endl;
@@ -213,8 +214,21 @@ struct Config
         value.set(std::move(other.value));
     }
 
-    Config& operator=(const Config&)=default;
-    Config& operator=(Config&&)=default;
+    Config& operator=(const Config& other)
+    {
+        name=other.name;
+        desc=other.desc;
+        value.set(other.value);
+        return *this;
+        
+    }
+    Config& operator=(Config&& other)
+    {
+        name=std::move(other.name);
+        desc=std::move(other.desc);
+        value.set(std::move(other.value));
+        return *this;
+    }
 
     bool set(ConfigValue _value)
     {
