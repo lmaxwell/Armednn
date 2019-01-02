@@ -49,10 +49,13 @@ add_config<T>(std::string name, std::string desc)
 ### param
 ```C++
 add_param(std::string name, std::vector<std::string> shape_mapping)
+add_param(std::string name, std::function<std::vector<uint32_t>(ConfigMap&)> shape_func)
 ```
 * name: parameter name
 
 * shape_mapping: shape mapping to config names
+
+* shape_func:   a function to get shape from Config
 ### state
 
 for stateful operation
@@ -64,10 +67,11 @@ REGISTER_OP(Fpooling).add_config<uint32_t>("output_channels","output channels")
 ```
 ```c++
 add_state(std::string name,std::vector<std::string> shape_mapping)
+add_state(std::string name,std::function<std::vector<uint32_t>(ConfigMap&)> shape_func)
 ```
 * name: state name
-* shape_mappint: shape_mapping to config names
-
+* shape_mapping: shape_mapping to config names
+* shape_func:   a function to get shape from Config
 
 ### num_input & num_output
 ```c++
