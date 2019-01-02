@@ -7,7 +7,7 @@
 #include "Eigen/Dense"
 
 
-namespace Tsnn{
+namespace Armednn{
 
 
 //Row Major Matrix
@@ -159,7 +159,7 @@ int compare_key(std::unordered_map<std::string,T>& a, std::unordered_map<std::st
 }
 
 
-}// namespace Tsnn
+}// namespace Armednn
 
 #endif
 

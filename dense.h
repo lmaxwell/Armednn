@@ -11,7 +11,7 @@
 #include <vector>
 #include <string>
 
-namespace Tsnn
+namespace Armednn
 {
 
 class Dense: public Operator{
@@ -39,6 +39,6 @@ REGISTER_OP(Dense).add_config<uint32_t>("dim0","dimension 0")
                      .set_num_input("1")
                      .set_num_output("1");
 
-}// namespace Tsnn
+}// namespace Armednn
 
 #endif

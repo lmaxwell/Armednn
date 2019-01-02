@@ -1,7 +1,7 @@
 #ifndef _HELPER_H
 #define _HELPER_H
 
-namespace Tsnn
+namespace Armednn
 {
 namespace Helper
 {

@@ -9,7 +9,7 @@
 #include "config.h"
 #include "param.h"
 
-namespace Tsnn
+namespace Armednn
 {
 
 struct Data
@@ -163,6 +163,6 @@ node->run()
 */
     
 
-}//namespace Tsnn
+}//namespace Armednn
 
 #endif
