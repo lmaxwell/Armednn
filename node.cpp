@@ -3,7 +3,7 @@
 #include "op_regist.h"
 #include "node.h"
 
-namespace Tsnn
+namespace Armednn
 {
 
 Data::Data(uint32_t id):_id(id){

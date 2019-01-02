@@ -9,7 +9,7 @@
 #include <functional>
 #include "common.h"
 
-namespace Tsnn{
+namespace Armednn{
 
 /*
 template <uint32_t N>
@@ -181,5 +181,5 @@ struct ShapeMapping
 };
 }//namespace Param
 
-}//namespace Tsnn
+}//namespace Armednn
 #endif

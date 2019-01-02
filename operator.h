@@ -7,7 +7,7 @@
 #include <string>
 
 
-namespace Tsnn
+namespace Armednn
 {
 
 class Data;
@@ -50,6 +50,6 @@ class Operator
 
 
 
-}// namespace Tsnn
+}// namespace Armednn
 
 #endif

@@ -6,7 +6,7 @@
 #include <unordered_map>
 #include <typeinfo>
 
-namespace Tsnn
+namespace Armednn
 {
 
 struct ConfigValue;
@@ -282,6 +282,6 @@ struct InOutMapping
 }//namespace Config
 
 
-}// namespace Tsnn
+}// namespace Armednn
 
 #endif

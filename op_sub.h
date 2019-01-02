@@ -4,7 +4,7 @@
 
 #include "common.h"
 #include <iostream>
-namespace Tsnn{
+namespace Armednn{
 
 namespace OpSub{
 
@@ -42,6 +42,6 @@ activaition("tanh")(a);
 ActFun activation(std::string name);
 
 } // OpSub
-} // Tsnn
+} // Armednn
 #endif
 

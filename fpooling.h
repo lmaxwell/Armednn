@@ -12,7 +12,7 @@
 #include <vector>
 #include <string>
 
-namespace Tsnn
+namespace Armednn
 {
 
 class Fpooling: public Operator{
@@ -68,6 +68,6 @@ REGISTER_OP(Fpooling).add_config<uint32_t>("output_channels","output channels")
                      .set_num_input("2")
                      .set_num_output("1");
 
-}// namespace Tsnn
+}// namespace Armednn
 
 #endif

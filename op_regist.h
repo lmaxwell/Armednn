@@ -16,7 +16,7 @@
 #include "param.h"
 
 
-namespace Tsnn{
+namespace Armednn{
 
 
 struct RegContent
@@ -145,5 +145,5 @@ class Creator
     static Creator<Op>  g_##Op##OpCreator(#Op); \
     static RegContent reg##Op=Registry::get().set_op(#Op).get_op(#Op).set_factory( g_##Op##OpCreator ) 
 
-} //namespace Tsnn
+} //namespace Armednn
 #endif

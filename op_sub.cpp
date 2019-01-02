@@ -4,7 +4,7 @@
 
 
 
-namespace Tsnn{
+namespace Armednn{
 namespace OpSub{
 
 
@@ -159,4 +159,4 @@ ActFun activation(std::string name)
 
 
 }// Op
-}// Tsnn
+}// Armednn

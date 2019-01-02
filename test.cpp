@@ -9,11 +9,11 @@
 #include "concat.h"
 #include "fpooling.h"
 
-using namespace Tsnn;
+using namespace Armednn;
 
 
 
-namespace Tsnn
+namespace Armednn
 {
 
 #if __DEBUG__

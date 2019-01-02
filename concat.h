@@ -11,7 +11,7 @@
 #include <vector>
 #include <string>
 
-namespace Tsnn
+namespace Armednn
 {
 class Concat: public Operator{
     public:
