@@ -1,11 +1,12 @@
-#include "tsnn/core.h"
-#include <iostream>
 
-#ifndef _OP_H
-#define _OP_H
+#ifndef _OP_SUB_H
+#define _OP_SUB_H
+
+#include "common.h"
+#include <iostream>
 namespace Tsnn{
 
-namespace Op{
+namespace OpSub{
 
 
 /*
@@ -40,7 +41,7 @@ activaition("tanh")(a);
 */
 ActFun activation(std::string name);
 
-} // Op
+} // OpSub
 } // Tsnn
 #endif
 

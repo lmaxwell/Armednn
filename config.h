@@ -3,8 +3,9 @@
 
 #include <string>
 #include <iostream>
-#include <map>
+#include <unordered_map>
 #include <typeinfo>
+
 namespace Tsnn
 {
 
@@ -37,6 +38,13 @@ struct ConfigValue
         }
     }
 
+    //copy constructor
+    ConfigValue(const ConfigValue& other)
+    {
+        //std::cout<<"COPY CTOR"<<std::endl;
+        base=other.base->copy();
+    }
+
     //move constructor
     ConfigValue(ConfigValue&& other)
     {
@@ -45,17 +53,21 @@ struct ConfigValue
         other.base=nullptr;
     }
 
-    //copy constructor
-    ConfigValue(const ConfigValue& other)
+
+    ConfigValue& operator=(const ConfigValue& other)
     {
-        //std::cout<<"COPY CTOR"<<std::endl;
+        std::cout<<"COPY ASSIGN"<<std::endl;
+        if(base!=nullptr)
+            delete base;
         base=other.base->copy();
+        return *this;
     }
 
 
+
+
     //move assignment
-    ConfigValue& operator=(ConfigValue&& other)=delete;
-    /*
+    ConfigValue& operator=(ConfigValue&& other)
     {
         std::cout<<"MOVE ASSIGN"<<std::endl;
         if(base!=nullptr)
@@ -64,21 +76,8 @@ struct ConfigValue
         }
         base=other.base;
         other.base=nullptr;
-    }
-    */
-
-    ConfigValue& operator=(const ConfigValue& other)=delete;
-    /*
-    {
-        std::cout<<"COPY ASSIGN"<<std::endl;
-        if(base!=nullptr)
-            delete base;
-        base=other.base->copy();
         return *this;
     }
-    */
-
-
 
 
 
@@ -180,55 +179,11 @@ struct Config
 {
     Config()=default;
 
-    //proto
     template <typename T>
     Config(std::string _name,std::string _desc,T _value):name(_name),desc(_desc),value(_value){}
 
-    /*
-    //user input
     template <typename T>
-    Config(T&& _value):value(std::forward<T>(_value)){
-        std::cout<<"only value constructor"<<std::endl;
-    }
-    */
-
-    //user input
-    template <typename T>
-    Config(T _value):value(_value){
-        //std::cout<<"only value constructor"<<std::endl;
-    }
-
-    Config(const Config& other)
-    {
-        //std::cout<<"copy ctor"<<std::endl;
-        name=other.name;
-        desc=other.desc;
-        value.set(other.value);
-    }
-
-    Config(Config&& other)
-    {
-        //std::cout<<"move ctor"<<std::endl;
-        name=std::move(other.name);
-        desc=std::move(other.desc);
-        value.set(std::move(other.value));
-    }
-
-    Config& operator=(const Config& other)
-    {
-        name=other.name;
-        desc=other.desc;
-        value.set(other.value);
-        return *this;
-        
-    }
-    Config& operator=(Config&& other)
-    {
-        name=std::move(other.name);
-        desc=std::move(other.desc);
-        value.set(std::move(other.value));
-        return *this;
-    }
+    Config(T _value):value(_value){}
 
     bool set(ConfigValue _value)
     {
@@ -273,6 +228,7 @@ struct Config
     }
 
 
+
     template <typename T>
     bool get(T& _value)
     {
@@ -288,18 +244,42 @@ struct Config
       
     }
 
-
-    std::string name;
-    std::string desc;
-    ConfigValue value;
+    std::string name="None";
+    std::string desc="None";
+    ConfigValue value=ConfigValue();
 };
 
-typedef std::map<std::string,Config> ConfigMap;
+typedef std::unordered_map<std::string,Config> ConfigMap;
 
 
-bool config_has_key(const ConfigMap& configs,std::string& name);
+bool config_has_key(const ConfigMap& config,std::string& name);
 bool config_compare_key(const ConfigMap& a ,const ConfigMap &b);
 bool config_compare_type(const ConfigMap& a ,const ConfigMap &b);
+namespace ConfigHelp
+{
+
+struct InOutMapping
+{
+    std::string name;
+    InOutMapping(std::string _name):name(_name){}
+    uint32_t operator()(ConfigMap& config)
+    {
+            if (name=="?")
+                return 0;
+            if(config.find(name)!=config.end())
+            {
+                uint32_t tmp;
+                CHECK(config[name].get<uint32_t>(tmp))<<"InputMapping name" <<name<<" must be type uint32_t";
+                return tmp;
+            }
+            else
+            {
+                return (uint32_t) atoi(name.c_str());
+            }
+    }
+};
+
+}//namespace Config
 
 
 }// namespace Tsnn
