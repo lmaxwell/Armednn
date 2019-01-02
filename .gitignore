@@ -2,3 +2,4 @@ test
 *.o
 build
 bin
+a.out
