@@ -21,8 +21,6 @@ std::unique_ptr<Armed> make_armed(Arm& arm, std::unique_ptr<Operator> op)
 std::unique_ptr<Node> make_node(DataPtr& inputs, std::unique_ptr<Armed> armed)
 
 
-std::unique_ptr<Node> make_node(DataPtr&& inputs, std::unique_ptr<Armed> armed)
-
 ```
 
 
