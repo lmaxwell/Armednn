@@ -1,16 +1,22 @@
-#include "Eigen/Dense"
-#include <iostream>
-
 #ifndef _CORE_H
 #define _CORE_H
+
+#include <iostream>
+#include <unordered_map>
+#include <string>
+#include "Eigen/Dense"
+
 
 namespace Tsnn{
 
 
 //Row Major Matrix
 typedef Eigen::Matrix<float,Eigen::Dynamic,Eigen::Dynamic,Eigen::RowMajor> Matrix; 
-//Row Vector
+
+//Vector
 typedef Eigen::Matrix<float,1,Eigen::Dynamic> Vector; 
+
+
 
 
 /* simple logging*/
@@ -70,6 +76,9 @@ class LogMessage{
     }
 };
 
+
+
+
 #define LOG(type)        LogMessage(#type,__FILE__,__func__,__LINE__).stream()
 
 #define REGIST            LOG(REGIST) 
@@ -98,8 +107,59 @@ class LogMessage{
 #define DCHECK_GE(x, y)  DCHECK((x) >= (y))
 #define DCHECK_NE(x, y)  DCHECK((x) != (y))
 
+template <typename T>
+struct Counter
+{
+    static uint32_t objects_created;
+    static uint32_t objects_alive;
 
+    Counter()
+    {
+        ++objects_created;
+        ++objects_alive;
+    }
+
+    Counter(const Counter&)
+    {
+        ++objects_created;
+        ++objects_alive;
+    }
+
+    protected:
+    ~Counter() 
+    {
+        --objects_alive;
+    }
+};
+template <typename T> uint32_t Counter<T>::objects_created=0;
+template <typename T> uint32_t Counter<T>::objects_alive=0;
+
+
+
+template <typename T>
+int compare_key(std::unordered_map<std::string,T>& a, std::unordered_map<std::string,T>& b)
+{
+    for(auto item:a)
+    {
+        if(b.find(item.first)==b.end())
+        {
+            DEBUG<<item.first<<" not found";
+            return -1;
+        }
+    }
+    for(auto item:b)
+    {
+        if(a.find(item.first)==a.end())
+        {
+            DEBUG<<item.first<<" not found";
+            return 0;
+        }
+    }
+    return 1;
 }
+
+
+}// namespace Tsnn
 
 #endif
 

@@ -1,11 +1,11 @@
 
-#include "tsnn/op.h"
 #include <map>
+#include "op_sub.h"
 
 
 
 namespace Tsnn{
-namespace Op{
+namespace OpSub{
 
 
 /* internal 
@@ -24,10 +24,10 @@ bool _add_matrix_matrix(Matrix& a,Matrix &b)
     }
 }
 
-Eigen::Map<Vector> _matrix_to_vector_in_place(Matrix& a)
+Eigen::Map<Vector,Eigen::Aligned> _matrix_to_vector_in_place(Matrix& a)
 {
     CHECK(a.rows()==1);
-    return Eigen::Map<Vector>(a.data(),1,a.cols());
+    return Eigen::Map<Vector,Eigen::Aligned>(a.data(),1,a.cols());
 }
 
 bool _add_matrix_vector(Matrix& a,Matrix &b)
@@ -36,6 +36,7 @@ bool _add_matrix_vector(Matrix& a,Matrix &b)
     if(a.cols()==b.cols())
     {
         a.rowwise()+=_matrix_to_vector_in_place(b);
+
         return true;
     }
     else
