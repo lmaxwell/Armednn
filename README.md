@@ -82,8 +82,8 @@ REGISTER_OP(Split).add_config<uint32_t>("num_split","number of split outputs, al
 ```c++
 set_num_input(std::string num_input)
 ```
-num_input: if exists in config, get mapping number from config; else get by (unit32_t)num_input
-num_output: ...
+* num_input: if exists in config, get mapping number from config; else get by (unit32_t)num_input
+* num_output: ...
 
 
 
