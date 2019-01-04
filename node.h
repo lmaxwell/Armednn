@@ -3,7 +3,9 @@
 #ifndef _NODE_H
 #define _NODE_H
 
+
 #include <memory>
+#include <vector>
 #include <unordered_map>
 #include "common.h"
 #include "config.h"
@@ -18,13 +20,31 @@ struct Data
 
         Matrix _value;
         uint32_t _id=0;
+        
+        uint32_t _rows=0;
+        uint32_t _cols=0;
 
     public:
 
         Data()=default;
         Data(uint32_t id);
-        Matrix& get();
-        void set(Matrix&& value);
+
+        void allocate(uint32_t rows,uint32_t cols)
+        {
+            if(rows*cols<(uint32_t)_value.size())   
+            {
+                _rows=rows;
+                _cols=cols;
+            }
+            else
+            {
+                _value.resize(rows,cols);
+                INFO<<_value.rows()<<" "<<_value.cols();
+                _rows=rows;
+                _cols=cols;
+            }
+        }
+        Eigen::Map<Matrix,Eigen::Aligned,Eigen::Stride<1,1>> get();
         uint32_t id();
 
 };

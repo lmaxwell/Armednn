@@ -9,16 +9,11 @@ namespace Armednn
 Data::Data(uint32_t id):_id(id){
 
 }
-
-Matrix& Data::get()
+Eigen::Map<Matrix,Eigen::Aligned,Eigen::Stride<1,1>> Data::get()
 {
-    return _value;
+    return Eigen::Map<Matrix,Eigen::Aligned,Eigen::Stride<1,1>>(_value.data(),_rows,_cols);
 }
 
-void Data::set(Matrix&& value)
-{
-    _value=std::move(value);
-}
 
 uint32_t Data::id()
 {
