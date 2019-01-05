@@ -106,7 +106,7 @@ namespace {
 //internal
 
 // activation "tanh"
-bool _tanh(Matrix& a)
+bool _tanh(Eigen::Ref<Matrix> a)
 {
     a.array()=a.array().tanh();
     return true;
@@ -114,21 +114,21 @@ bool _tanh(Matrix& a)
 
 // "sigmoid"
 //  1/(1+exp(-x))
-bool _sigmoid(Matrix& a)
+bool _sigmoid(Eigen::Ref<Matrix> a)
 {
     a.array()=1.0/(1.0 + (-a.array()).exp());
     return true;
 }
 
 //  "identity"
-bool _identity(Matrix& a)
+bool _identity(Eigen::Ref<Matrix> a)
 {
     return true;
 }
 
 
 //  not implemented
-bool _no_implement(Matrix& a)
+bool _no_implement(Eigen::Ref<Matrix> a)
 {
     return false;
 }

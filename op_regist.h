@@ -1,6 +1,6 @@
 
-#ifndef _Operator_H_
-#define _Operator_H_
+#ifndef _OP_REGIST_H_
+#define _OP_REGIST_H_
 
 #include <string>
 #include <vector>
@@ -19,6 +19,7 @@
 namespace Armednn{
 
 
+class Operator;
 struct RegContent
 {
     typedef std::function< std::unique_ptr<Operator> (std::string )> CreateFun;

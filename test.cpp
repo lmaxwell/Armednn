@@ -13,16 +13,6 @@ using namespace Armednn;
 
 
 
-namespace Armednn
-{
-
-#if __DEBUG__
-bool LogMessage::_enable=true;
-#else
-bool LogMessage::_enable=true;
-#endif
-}
-
 
 
 
@@ -34,14 +24,15 @@ void ex1()
     std::shared_ptr<Data> d2=std::make_shared<Data>();
 
     Matrix temp=Matrix::Identity(8,8);
-    d1->set(std::move(temp));
+    d1->allocate(8,8);
+    d1->get()=temp;
 
     DataPtr inputs;
     inputs.push_back(std::move(d1));
 
 
     ConfigMap config;
-    config.insert({"activation",{(std::string)"identity"}});
+    config.insert({"activation",{(std::string)"tanh"}});
     config.insert({"dim0",{(uint32_t)8}});
     config.insert({"dim1",{(uint32_t)8}});
     ParamMap param;
@@ -57,7 +48,11 @@ void ex1()
 
     node1->run();
     INFO<<node1->id();
+    INFO<<node1->output(0)->get().data();
+    INFO<<std::endl<<node1->output(0)->get();
 
+    node1->run();
+    INFO<<node1->output(0)->get().data();
     INFO<<std::endl<<node1->output(0)->get();
 }
 
@@ -90,7 +85,8 @@ void ex2()
     std::shared_ptr<Data> d2=std::make_shared<Data>();
 
     Matrix temp=Matrix::Identity(8,8);
-    d1->set(std::move(temp));
+    d1->allocate(8,8);
+    d1->get()=temp;
 
     DataPtr inputs;
     inputs.push_back(std::move(d1));
@@ -126,10 +122,11 @@ void ex3()
     std::shared_ptr<Data> d1=std::make_shared<Data>();
     std::shared_ptr<Data> d2=std::make_shared<Data>();
 
-    int L=2000;
-    int C=1200;
+    int L=4;
+    int C=12;
     Matrix temp=Matrix::Identity(L,C);
-    d1->set(std::move(temp));
+    d1->allocate(L,C);
+    d1->get()=temp;
 
     DataPtr inputs;
     inputs.push_back(std::move(d1));
@@ -152,19 +149,9 @@ void ex3()
 
     auto dense_1=make_op("Dense","dense-1");
 
-    /*
-    ConfigMap config_dense_1;
-    config_dense_1.insert({"activation",{(std::string)"tanh"}});
-    config_dense_1.insert({"dim0",{(uint32_t)C}});
-    config_dense_1.insert({"dim1",{(uint32_t)C}});
-    ParamMap param_dense_1;
-    param_dense_1.insert({"weight",{Matrix::Identity(C,C)}});
-    param_dense_1.insert({"bias",{Matrix::Ones(1,C)}});
-    */
 
     armed=make_armed(arm,std::move(dense_1));
-    auto node1=make_node({node0->output(0)},std::move(armed));
-    //auto node1=make_node(node0->output(),std::move(armed));
+    auto node1=make_node(node0->output(),std::move(armed));
 
     auto split_0=make_op("Split","split-0");
     ConfigMap config_split_0;
@@ -205,13 +192,11 @@ void ex3()
     node4->run(false);
     node4->run();
 
-    /*
     INFO<<std::endl<<node1->output(0)->get();
     INFO<<std::endl<<node2->output(0)->get();
     INFO<<std::endl<<node2->output(1)->get();
     INFO<<std::endl<<node3->output(0)->get();
     INFO<<std::endl<<node4->output(0)->get();
-    */
 
     INFO<<"node0 "<<node0->id();
     for(uint32_t i=0;i<node0->input().size();i++)
@@ -223,18 +208,25 @@ void ex3()
     INFO<<"node2 "<<node2->id();
     for(uint32_t i=0;i<node2->input().size();i++)
         INFO<<node2->input(i)->id();
+    /*
     INFO<<"node3 "<<node3->id();
     for(uint32_t i=0;i<node3->input().size();i++)
         INFO<<node3->input(i)->id();
+    */
 }
 
 
 int main()
 {
 
+
+
     ex1();
     ex2();
     ex3();
+
+
+
     std::unordered_map<std::string,ConfigMap> test;
 
 }

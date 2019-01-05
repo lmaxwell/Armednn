@@ -31,7 +31,7 @@ bool multiply_elemwise(Matrix &a, Matrix&b, Matrix& c);
 
 
 //Activation function type
-typedef std::function<bool (Matrix&)> ActFun;
+typedef std::function<bool (Eigen::Ref<Matrix>)> ActFun;
 
 
 /*

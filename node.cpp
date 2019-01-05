@@ -9,9 +9,26 @@ namespace Armednn
 Data::Data(uint32_t id):_id(id){
 
 }
-Eigen::Map<Matrix,Eigen::Aligned,Eigen::Stride<1,1>> Data::get()
+
+void Data::allocate(uint32_t rows,uint32_t cols)
 {
-    return Eigen::Map<Matrix,Eigen::Aligned,Eigen::Stride<1,1>>(_value.data(),_rows,_cols);
+    if(rows*cols<=(uint32_t)_value.size())   
+    {
+        _rows=rows;
+        _cols=cols;
+    }
+    else
+    {
+        _value.resize(rows,cols);
+        DEBUG<<"allocate(id="<<_id<<") "<<_value.rows()<<" "<<_value.cols();
+        _rows=rows;
+        _cols=cols;
+    }
+}
+
+Eigen::Map<Matrix,Eigen::Aligned> Data::get()
+{
+    return Eigen::Map<Matrix,Eigen::Aligned>(_value.data(),_rows,_cols);
 }
 
 

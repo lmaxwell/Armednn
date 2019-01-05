@@ -22,8 +22,8 @@ class Fpooling: public Operator{
             void inference(DataPtr& inputs, DataPtr& outputs, Arm& arm)//, State& state)
             {   
 
-                Matrix output;
-                output.resize(inputs[0]->get().rows(),inputs[0]->get().cols());
+                outputs[0]->allocate(inputs[0]->get().rows(),inputs[0]->get().cols());
+                auto output=outputs[0]->get();
 
                 Matrix init_state;
 
@@ -59,7 +59,6 @@ class Fpooling: public Operator{
 
                 }
                 arm.state("h").set(output.row(output.rows()-1));
-                outputs[0]->set(std::move(output));
             }
 };
 

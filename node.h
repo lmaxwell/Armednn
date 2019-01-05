@@ -16,8 +16,8 @@ namespace Armednn
 
 struct Data
 {
-    private:
 
+    private:
         Matrix _value;
         uint32_t _id=0;
         
@@ -29,22 +29,10 @@ struct Data
         Data()=default;
         Data(uint32_t id);
 
-        void allocate(uint32_t rows,uint32_t cols)
-        {
-            if(rows*cols<(uint32_t)_value.size())   
-            {
-                _rows=rows;
-                _cols=cols;
-            }
-            else
-            {
-                _value.resize(rows,cols);
-                INFO<<_value.rows()<<" "<<_value.cols();
-                _rows=rows;
-                _cols=cols;
-            }
-        }
-        Eigen::Map<Matrix,Eigen::Aligned,Eigen::Stride<1,1>> get();
+        void allocate(uint32_t rows,uint32_t cols);
+
+        Eigen::Map<Matrix,Eigen::Aligned> get();
+
         uint32_t id();
 
 };
