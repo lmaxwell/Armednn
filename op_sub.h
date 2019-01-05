@@ -9,26 +9,6 @@ namespace Armednn{
 namespace OpSub{
 
 
-/*
-add in place
-operate a+b , and store result in a
-if b.rows==1, b is broadcast
-*/
-bool add(Matrix& a,Matrix& b);
-
-
-/*
-multiply
-operate a*b , and store result in c  
-*/
-bool  multiply(Matrix& a, Matrix& b, Matrix& c);
-
-/*
-multiply elementwise
-operate a*b  , and store result in c  
-*/
-bool multiply_elemwise(Matrix &a, Matrix&b, Matrix& c);
-
 
 //Activation function type
 typedef std::function<bool (Eigen::Ref<Matrix>)> ActFun;

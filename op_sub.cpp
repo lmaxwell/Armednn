@@ -8,99 +8,6 @@ namespace Armednn{
 namespace OpSub{
 
 
-/* internal 
- * 
- * */
-bool _add_matrix_matrix(Matrix& a,Matrix &b)
-{
-    if(a.rows()==b.rows() && a.cols()==b.cols())
-    {
-        a+=b;
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
-Eigen::Map<Vector,Eigen::Aligned> _matrix_to_vector_in_place(Matrix& a)
-{
-    CHECK(a.rows()==1);
-    return Eigen::Map<Vector,Eigen::Aligned>(a.data(),1,a.cols());
-}
-
-bool _add_matrix_vector(Matrix& a,Matrix &b)
-{
-    CHECK(b.rows()==1);
-    if(a.cols()==b.cols())
-    {
-        a.rowwise()+=_matrix_to_vector_in_place(b);
-
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
-/*
-add in place
-operate a+b , and store result in a
-if b.rows==1, b is broadcast
-*/
-bool add(Matrix& a,Matrix& b)
-{
-           
-    if(b.rows()==1)
-    {
-        return _add_matrix_vector(a,b);
-    }
-    else 
-        return _add_matrix_matrix(a,b);
-}
-
-
-
-
-/*
-multiply
-operate a*b , and store result in c  
-*/
-bool  multiply(Matrix& a, Matrix& b, Matrix& c)
-{
-    if(a.cols()==b.rows())
-    {
-        c.noalias() = a*b;
-        return true;
-    }
-    else
-    {
-        DEBUG<<"a.cols() " <<a.cols()<<" != b.rows() "<<b.rows();
-        return false;
-    }
-
-}
-
-/*
-multiply elementwise
-operate a*b  , and store result in c  
-*/
-bool multiply_elemwise(Matrix &a, Matrix&b, Matrix& c)
-{
-    if(a.rows()==b.rows() && a.cols()==b.cols())
-    {
-        c.array()=a.array()*b.array();
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-
-}
-
 
 namespace {
 //internal
@@ -116,7 +23,16 @@ bool _tanh(Eigen::Ref<Matrix> a)
 //  1/(1+exp(-x))
 bool _sigmoid(Eigen::Ref<Matrix> a)
 {
-    a.array()=1.0/(1.0 + (-a.array()).exp());
+    for(uint32_t i=0;i<a.rows();i++)
+    {
+        for(uint32_t j=0;j<a.cols();j++)
+        {
+            if(a(i,j)>0)
+                a(i,j)=1.0/(1.0+exp(-a(i,j)));
+            else
+                a(i,j)=exp(a(i,j))/(1.0+exp(a(i,j)));
+        }
+    }
     return true;
 }
 

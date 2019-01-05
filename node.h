@@ -76,10 +76,10 @@ Type Arm::config(std::string name)
 {
     CHECK(_config.find(name)!=_config.end())
         <<"config: "<<name<<" not found!";
-    Type tmp;
-    CHECK(_config[name].get<Type>(tmp))
+    std::unique_ptr<Type> tmp(new Type());
+    CHECK(_config[name].get<Type>(*tmp))
         <<"config: "<<name<<" you provided wrong type";;
-    return tmp;
+    return *tmp;
 }
 
 class Operator;

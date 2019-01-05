@@ -268,7 +268,7 @@ struct InOutMapping
                 return 0;
             if(config.find(name)!=config.end())
             {
-                uint32_t tmp;
+                uint32_t tmp=0;
                 CHECK(config[name].get<uint32_t>(tmp))<<"InputMapping name" <<name<<" must be type uint32_t";
                 return tmp;
             }

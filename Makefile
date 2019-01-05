@@ -3,7 +3,7 @@ SRC:=$(wildcard *.cpp)
 OBJS:=$(SRC:.cpp=.o) 
 
 
-FLAGS=-DEIGEN_RUNTIME_NO_MALLOC -std=c++11   -msse4.2  -fabi-version=6 -mavx2 -mfma -O2 -Iinclude -Ithird_party/eigen  
+FLAGS=-DEIGEN_RUNTIME_NO_MALLOC -std=c++11   -msse4.2  -fabi-version=6 -mavx2 -mfma -O2 -Iinclude -Ithird_party/eigen   -Wall
 
 #FLAGS+=-DEIGEN_USE_BLAS 
 

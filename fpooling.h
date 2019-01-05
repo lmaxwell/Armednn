@@ -45,8 +45,9 @@ class Fpooling: public Operator{
                 for(uint32_t i=0;i<inputs[0]->get().rows();i++)
                 {
                     Matrix f=inputs[0]->get().row(i);
-                    //INFO<<"f "<<f.data();
+                    INFO<<"f "<<f;
                     OpSub::activation("sigmoid")(f);
+                    INFO<<"f "<<f;
                     Matrix z=inputs[1]->get().row(i);
                     OpSub::activation("tanh")(z);
                     if(i==0)
