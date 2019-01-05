@@ -1,7 +1,7 @@
 
-#include "operator.h"
-#include "op_regist.h"
-#include "node.h"
+#include "armednn/operator.h"
+#include "armednn/op_regist.h"
+#include "armednn/node.h"
 
 namespace Armednn
 {

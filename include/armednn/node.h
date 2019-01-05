@@ -7,9 +7,9 @@
 #include <memory>
 #include <vector>
 #include <unordered_map>
-#include "common.h"
-#include "config.h"
-#include "param.h"
+#include "armednn/common.h"
+#include "armednn/config.h"
+#include "armednn/param.h"
 
 namespace Armednn
 {
@@ -25,6 +25,7 @@ struct Data
         uint32_t _cols=0;
 
     public:
+        
 
         Data()=default;
         Data(uint32_t id);

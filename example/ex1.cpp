@@ -1,19 +1,6 @@
-#include "common.h"
-#include "operator.h"
-#include "config.h"
-#include "param.h"
-#include "op_regist.h"
-#include "node.h"
-#include "dense.h"
-#include "split.h"
-#include "concat.h"
-#include "fpooling.h"
+#include "armednn.h"
 
 using namespace Armednn;
-
-
-
-
 
 
 void ex1()
@@ -219,12 +206,20 @@ void ex3()
 int main()
 {
 
-
-
     ex1();
     ex2();
     ex3();
 
+    auto null=make_op("_Null_","null");
+
+    Arm arm;
+    auto armed=make_armed(arm,std::move(null));
+
+    DataPtr inputs;
+    auto node_null=make_node(inputs,std::move(armed));
+
+    INFO<<node_null->input().size();
+    INFO<<node_null->output().size();
 
 
     std::unordered_map<std::string,ConfigMap> test;

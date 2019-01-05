@@ -1,4 +1,4 @@
-#include "common.h"
+#include "armednn/common.h"
 
 namespace Armednn
 {

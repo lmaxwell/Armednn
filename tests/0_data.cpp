@@ -71,6 +71,8 @@ void test2()
 
 int main()
 {
+    Data d;
+    d.allocate(1,1);
     test1();
     test2();
 }

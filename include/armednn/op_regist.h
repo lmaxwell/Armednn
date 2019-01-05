@@ -11,15 +11,15 @@
 #include <functional>
 #include <memory>
 
-#include "common.h"
-#include "config.h"
-#include "param.h"
+#include "armednn/common.h"
+#include "armednn/config.h"
+#include "armednn/param.h"
+#include "armednn/operator.h"
 
 
 namespace Armednn{
 
 
-class Operator;
 struct RegContent
 {
     typedef std::function< std::unique_ptr<Operator> (std::string )> CreateFun;

@@ -4,10 +4,10 @@
 #define _DENSE_H_
 
 
-#include "operator.h"
-#include "op_regist.h"
-#include "op_sub.h"
-#include "node.h"
+#include "armednn/operator.h"
+#include "armednn/op_regist.h"
+#include "armednn/op_sub.h"
+#include "armednn/node.h"
 #include <vector>
 #include <string>
 
@@ -18,15 +18,7 @@ class Dense: public Operator{
     public:
 
 
-        void inference(DataPtr& inputs, DataPtr& outputs, Arm& arm)
-        {   
-            auto input=inputs[0]->get();
-            outputs[0]->allocate(input.rows(),arm.config<uint32_t>("dim1"));
-            auto output=outputs[0]->get();
-            output.noalias()=input*arm.param("weight");
-            output+=arm.param("bias").replicate(output.rows(),1);
-            OpSub::activation(arm.config<std::string>("activation"))(output);
-        }
+        void inference(DataPtr& inputs, DataPtr& outputs, Arm& arm);
 
 };
 

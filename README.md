@@ -1,3 +1,9 @@
+## INSTALL
+
+```
+make 
+make example test
+```
 
 ## 1. Usage
 

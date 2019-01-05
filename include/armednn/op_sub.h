@@ -2,7 +2,7 @@
 #ifndef _OP_SUB_H
 #define _OP_SUB_H
 
-#include "common.h"
+#include "armednn/common.h"
 #include <iostream>
 namespace Armednn{
 
