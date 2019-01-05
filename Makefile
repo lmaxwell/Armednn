@@ -18,6 +18,9 @@ CFLAGS+= -Iinclude -Ithird_party/eigen
 #avx compatible(eigen)
 CFLAGS+=-fabi-version=6
 
+#eigen licence
+CFLAGS+=-DEIGEN_MPL2_ONLY
+
 #sharded lib
 CFLAGS+=-fPIC
 
