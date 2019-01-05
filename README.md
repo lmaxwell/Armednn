@@ -38,14 +38,15 @@ audo mat=d.get() // return a Eigen::Map<Matrix>, not own any data, is a Mapping 
 Matrix a(100,100);
 
 d.get()=a; // assign, 
+mat=a; // the same 
 
 
 // make sure enough size before assign
 Matrix b(1000,1000);
-d.allocate(1000,1000);
-d.get()=b;
+d.allocate(1000,1000); // mat is useless now
+auto mat2=d.get(); // call get() again after every allocate()
+mat2=b;
 
-mat=d.get(); // call get() again after every allocate()
 
 ```
 
