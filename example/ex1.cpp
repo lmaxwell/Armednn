@@ -63,6 +63,22 @@ std::unique_ptr<Node> make_node(DataPtr&& inputs, std::unique_ptr<Armed> armed)
     return std::unique_ptr<Node>(new Node(inputs,std::move(armed)));
 }
 
+std::unique_ptr<Node> make_input(std::string name)
+{
+    auto null=make_op("_Null_",name);
+    Arm arm;
+    auto armed=make_armed(arm,std::move(null));
+    DataPtr inputs;
+    return make_node(inputs,std::move(armed));
+}
+
+/*
+std::unique_ptr<Node> make_node(DataPtr&& inputs, Arm& arm, std::string type, std::string name)
+{
+    auto op=make_op(
+}
+*/
+
 void ex2()
 {
 
@@ -106,17 +122,23 @@ void ex3()
 
     auto dense=make_op("Dense","dense-0");
 
+    /*
     std::shared_ptr<Data> d1=std::make_shared<Data>();
     std::shared_ptr<Data> d2=std::make_shared<Data>();
 
-    int L=4;
-    int C=12;
-    Matrix temp=Matrix::Identity(L,C);
     d1->allocate(L,C);
     d1->get()=temp;
 
     DataPtr inputs;
     inputs.push_back(std::move(d1));
+    */
+
+    int L=4;
+    int C=12;
+    Matrix temp=Matrix::Identity(L,C);
+
+    auto input_node=make_input("input");
+    input_node->feed(temp);
 
 
     ConfigMap config;
@@ -132,7 +154,7 @@ void ex3()
 
     auto armed=make_armed(arm,std::move(dense));
 
-    auto node0=make_node(inputs,std::move(armed));
+    auto node0=make_node(input_node->output(),std::move(armed));
 
     auto dense_1=make_op("Dense","dense-1");
 
@@ -210,16 +232,8 @@ int main()
     ex2();
     ex3();
 
-    auto null=make_op("_Null_","null");
 
-    Arm arm;
-    auto armed=make_armed(arm,std::move(null));
-
-    DataPtr inputs;
-    auto node_null=make_node(inputs,std::move(armed));
-
-    INFO<<node_null->input().size();
-    INFO<<node_null->output().size();
+    auto input_node=make_input("input");
 
 
     std::unordered_map<std::string,ConfigMap> test;

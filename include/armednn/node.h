@@ -104,6 +104,7 @@ struct Armed
         uint32_t num_input();
         uint32_t num_output();
         std::string name();
+        std::string type();
 
         void reset()
         {
@@ -146,6 +147,9 @@ struct Node: public Counter<Node>
         uint32_t id();
 
         std::string name();
+        std::string type();
+
+        void feed(Matrix& in);
 
         void reset()
         {

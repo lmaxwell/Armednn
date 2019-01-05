@@ -23,12 +23,14 @@ typedef Eigen::Matrix<float,1,Eigen::Dynamic> Vector;
 
 
 /* simple logging*/
+/*
 enum typelog {
     DEBUG,
     INFO,
     WARN,
     ERROR
 };
+*/
 
 struct nullstream: std::ostream{
     nullstream(): std::ostream(0){}

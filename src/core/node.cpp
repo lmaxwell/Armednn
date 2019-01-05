@@ -137,6 +137,11 @@ std::string Armed::name()
     return _op->name();
 }
 
+std::string Armed::type()
+{
+    return _op->type();
+}
+
 Node::Node(DataPtr& inputs, std::unique_ptr<Armed> armed):_inputs(inputs),_armed(std::move(armed)){
 
 
@@ -189,6 +194,24 @@ uint32_t Node::id()
 std::string Node::name()
 {
     return _armed->name();
+}
+std::string Node::type()
+{
+    return _armed->type();
+}
+
+void Node::feed(Matrix& in)
+{
+    if(type()=="_Null_")
+    {
+        _outputs[0]->allocate(in.rows(),in.cols());
+        _outputs[0]->get()=in;
+    }
+    else
+    {
+        DEBUG<<"cannot feed to "<<type();
+    }
+
 }
 
 
