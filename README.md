@@ -1,3 +1,9 @@
+## INSTALL
+
+```
+make 
+make example test
+```
 
 ## 1. Usage
 
@@ -20,13 +26,42 @@ std::unique_ptr<Armed> make_armed(Arm& arm, std::unique_ptr<Operator> op)
 
 std::unique_ptr<Node> make_node(DataPtr& inputs, std::unique_ptr<Armed> armed)
 
+```
+
+## 2. Data 
+
+```c++
+Data d; 
+
+d.allocate(10,10); // allocate 10x10
+
+d.allocate(5,5); // no allocate here;
+
+d.allocate(100,1000); // re allocate
+
+audo mat=d.get() // return a Eigen::Map<Matrix>, not own any data, is a Mapping of "Real Matrix" in Data
+
+Matrix a(100,100);
+
+d.get()=a; // assign, 
+mat=a; // the same 
+
+
+// make sure enough size before assign
+Matrix b(1000,1000);
+d.allocate(1000,1000); // mat is useless now
+auto mat2=d.get(); // call get() again after every allocate()
+mat2=b;
+
 
 ```
 
+*  remember to allocate() before doing any assign
+*  if use local reference, call get() again after every allocate()  
 
 ### 
 
-## 2. operation registry
+## 3. operation registry
 ```C++
 REGISTER_OP(Dense).add_config<uint32_t>("dim0","dimension 0")
                      .add_config<uint32_t>("dim1","dimension 1")

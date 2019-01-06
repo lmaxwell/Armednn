@@ -7,7 +7,7 @@
 #include <vector>
 #include <unordered_map>
 #include <functional>
-#include "common.h"
+#include "armednn/common.h"
 
 namespace Armednn{
 

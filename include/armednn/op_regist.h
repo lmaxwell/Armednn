@@ -1,6 +1,6 @@
 
-#ifndef _Operator_H_
-#define _Operator_H_
+#ifndef _OP_REGIST_H_
+#define _OP_REGIST_H_
 
 #include <string>
 #include <vector>
@@ -11,9 +11,10 @@
 #include <functional>
 #include <memory>
 
-#include "common.h"
-#include "config.h"
-#include "param.h"
+#include "armednn/common.h"
+#include "armednn/config.h"
+#include "armednn/param.h"
+#include "armednn/operator.h"
 
 
 namespace Armednn{
@@ -29,6 +30,7 @@ struct RegContent
     StateMap state;
     std::string num_input="?";
     std::string num_output="?";
+    std::string num_state="0";
 
 
 
@@ -76,6 +78,11 @@ struct RegContent
         return *this;
     }
 
+    RegContent& set_num_state(std::string _num_state)
+    {
+        num_state=_num_state;
+        return *this;
+    }
 
 };
 

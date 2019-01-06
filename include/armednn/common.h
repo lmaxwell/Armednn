@@ -1,9 +1,12 @@
-#ifndef _CORE_H
-#define _CORE_H
+#ifndef _COMMOM_H
+#define _COMMOM_H
 
 #include <iostream>
 #include <unordered_map>
 #include <string>
+#include <chrono>
+
+
 #include "Eigen/Dense"
 
 
@@ -20,12 +23,14 @@ typedef Eigen::Matrix<float,1,Eigen::Dynamic> Vector;
 
 
 /* simple logging*/
+/*
 enum typelog {
     DEBUG,
     INFO,
     WARN,
     ERROR
 };
+*/
 
 struct nullstream: std::ostream{
     nullstream(): std::ostream(0){}
@@ -133,6 +138,22 @@ struct Counter
 };
 template <typename T> uint32_t Counter<T>::objects_created=0;
 template <typename T> uint32_t Counter<T>::objects_alive=0;
+
+
+class Timer
+{
+    public:
+        Timer() : beg_(clock_::now()) {}
+        void reset() { beg_ = clock_::now(); }
+        double elapsed() const { 
+            return std::chrono::duration_cast<second_>
+                (clock_::now() - beg_).count(); }
+
+    private:
+        typedef std::chrono::high_resolution_clock clock_;
+        typedef std::chrono::duration<double, std::ratio<1> > second_;
+        std::chrono::time_point<clock_> beg_;
+};
 
 
 

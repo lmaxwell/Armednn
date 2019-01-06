@@ -1,5 +1,8 @@
 test
 *.o
+*.d
 build
 bin
+lib
 a.out
+.temp
