@@ -17,15 +17,17 @@ std::unique_ptr<Armed> make_armed(Arm& arm, std::unique_ptr<Operator> op)
 }
 
 
-std::unique_ptr<Node> make_node(DataPtr& inputs, std::unique_ptr<Armed> armed)
+
+
+std::unique_ptr<Node> make_node(DataPtr inputs, std::unique_ptr<Armed> armed, DataPtr outputs)
 {
-    return std::unique_ptr<Node>(new Node(inputs,std::move(armed)));
+    return std::unique_ptr<Node>(new Node(inputs,std::move(armed),outputs));
 }
 
 
-std::unique_ptr<Node> make_node(DataPtr&& inputs, std::unique_ptr<Armed> armed)
+std::unique_ptr<Node> make_node(std::string type, Arm& arm, DataPtr inputs, std::string name, DataPtr outputs)
 {
-    return std::unique_ptr<Node>(new Node(inputs,std::move(armed)));
+    return make_node(inputs,make_armed(arm,make_op(type,name)),outputs);
 }
 
 

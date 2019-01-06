@@ -29,11 +29,11 @@ std::unique_ptr<Operator> make_op(std::string type,std::string name);
 
 std::unique_ptr<Armed> make_armed(Arm& arm, std::unique_ptr<Operator> op);
 
+std::unique_ptr<Node> make_node(DataPtr inputs, std::unique_ptr<Armed> armed, DataPtr outputs=DataPtr());
 
-std::unique_ptr<Node> make_node(DataPtr& inputs, std::unique_ptr<Armed> armed);
 
-std::unique_ptr<Node> make_node(DataPtr&& inputs, std::unique_ptr<Armed> armed);
 
+std::unique_ptr<Node> make_node(std::string type, Arm& arm, DataPtr inputs, std::string name, DataPtr outputs=DataPtr());
 
 std::unique_ptr<Node> make_input(std::string name);
 

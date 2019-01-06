@@ -212,23 +212,93 @@ void ex3()
     */
 }
 
+void ex4()
+{
+
+
+    int L=4;
+    int C=12;
+
+    auto input_node=make_input("input");
+
+
+    ConfigMap config;
+    config.insert({"activation",{(std::string)"tanh"}});
+    config.insert({"dim0",{(uint32_t)C}});
+    config.insert({"dim1",{(uint32_t)C}});
+    ParamMap param;
+    param.insert({"weight",{Matrix::Identity(C,C)}});
+    param.insert({"bias",{Matrix::Ones(1,C)}});
+
+    Arm arm(config,param);
+
+    auto dense_0=make_node("Dense",arm,input_node->output(),"dense-0");
+    auto dense_1=make_node("Dense",arm,dense_0->output(),"dense-1");
+    auto dense_2=make_node("Dense",arm,dense_1->output(),"dense-2");
+    auto dense_3=make_node("Dense",arm,dense_2->output(),"dense-3");
+
+
+    Matrix temp=Matrix::Identity(L,C);
+    input_node->feed(temp);
+
+    dense_0->run();
+    dense_1->run();
+    dense_2->run();
+    dense_3->run();
+
+    INFO<<dense_3->output(0)->get();
+
+}
+
+void ex5()
+{
+
+
+    int L=4;
+    int C=12;
+
+    auto input_node=make_input("input");
+
+
+    ConfigMap config;
+    config.insert({"activation",{(std::string)"tanh"}});
+    config.insert({"dim0",{(uint32_t)C}});
+    config.insert({"dim1",{(uint32_t)C}});
+    ParamMap param;
+    param.insert({"weight",{Matrix::Identity(C,C)}});
+    param.insert({"bias",{Matrix::Ones(1,C)}});
+
+    Arm arm(config,param);
+
+    auto dense_0=make_node("Dense",arm,input_node->output(),"dense-0");
+    auto dense_1=make_node("Dense",arm,dense_0->output(),"dense-1");
+    auto dense_2=make_node("Dense",arm,dense_1->output(),"dense-2",dense_0->output()); //share output with dense_0
+    auto dense_3=make_node("Dense",arm,dense_2->output(),"dense-3",dense_1->output()); //share output with dense_1
+
+
+    Matrix temp=Matrix::Identity(L,C);
+    input_node->feed(temp);
+
+    dense_0->run();
+    dense_1->run();
+    dense_2->run();
+    dense_3->run();
+
+    INFO<<dense_3->output(0)->get();
+
+}
+
 
 int main()
 {
 
+    /*
     ex1();
     ex2();
     ex3();
-
-
-    auto input_node=make_input("input");
-    auto init_state_node=make_state("init_state",Matrix::Zero(4,4));
-
-    INFO<<init_state_node->output(0)->get();
-    init_state_node->run();
-    INFO<<init_state_node->output(0)->get();
-
-
+    */
+    ex4();
+    ex5();
 
 
     std::unordered_map<std::string,ConfigMap> test;

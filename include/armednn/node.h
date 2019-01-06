@@ -114,7 +114,7 @@ struct Node: public Counter<Node>
         DataPtr _outputs;
         std::unique_ptr<Armed> _armed;
     public:
-        explicit Node(DataPtr& inputs, std::unique_ptr<Armed> armed);
+        explicit Node(DataPtr& inputs, std::unique_ptr<Armed> armed, DataPtr outputs=DataPtr());
 
         ~Node(){std::cout<<"Node destory"<<std::endl;}
 

@@ -144,7 +144,7 @@ std::string Armed::type()
     return _op->type();
 }
 
-Node::Node(DataPtr& inputs, std::unique_ptr<Armed> armed):_inputs(inputs),_armed(std::move(armed)){
+Node::Node(DataPtr& inputs, std::unique_ptr<Armed> armed, DataPtr outputs):_inputs(inputs),_armed(std::move(armed)){
 
 
     _id=objects_created;
@@ -154,11 +154,24 @@ Node::Node(DataPtr& inputs, std::unique_ptr<Armed> armed):_inputs(inputs),_armed
         <<"Input size not match\t"
         <<_armed->name();
 
+    if(outputs.size()>0)
+    {
+    //given output
+        CHECK(outputs.size()==_armed->num_output());
+        for(uint32_t i=0;i<_armed->num_output();i++)
+            _outputs.push_back(outputs[i]);
+    }
+    else
+    {
     //allocate output 
-    for(uint32_t i=0;i<_armed->num_output();i++)
-        _outputs.push_back(std::unique_ptr<Data>(new Data(_id)));
+        for(uint32_t i=0;i<_armed->num_output();i++)
+            _outputs.push_back(std::unique_ptr<Data>(new Data(_id)));
+    }
+
+    // state
     for(uint32_t i=0;i<_armed->num_state();i++)
         _outputs.push_back(_inputs[_armed->num_input()+i]);
+
 }
 
 
