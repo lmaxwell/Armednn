@@ -10,5 +10,6 @@
 #include "armednn/operator.h"
 #include "armednn/node.h"
 #include "armednn/special.h"
+#include "armednn/helper.h"
 
 #endif
