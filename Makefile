@@ -1,77 +1,59 @@
 
-CC:=g++
+cxx:=g++
 
-################ CFLAGS ########
 
-#common flag
-CFLAGS:= -std=c++11 -Wall
-
-#Eigen debug
-CFLAGS+=-DEIGEN_RUNTIME_NO_MALLOC  
-
-#Eigen vectorization
-CFLAGS+= -msse4.2 -mavx2 -mfma -O2 
+-include common.mk
 
 #includes
-CFLAGS+= -Iinclude -Ithird_party/eigen
-
-#avx compatible(eigen)
-CFLAGS+=-fabi-version=6
-
-#eigen licence
-CFLAGS+=-DEIGEN_MPL2_ONLY
-
-#sharded lib
-CFLAGS+=-fPIC
-
-############### CFLAGS #############
-
+cxxflags+= -Iinclude -Ithird_party/eigen
 
 # mkl 
-#EIGEN_USE_MKL_ALL
-LIBS:=
+#eigen_use_mkl_all
+ldflags:=
 
 
 
-SRCS:=$(wildcard src/core/*.cpp)
-SRCS+=$(wildcard src/op/*.cpp)
-
-OBJS:=$(SRCS:.cpp=.o)
+srcs:=$(wildcard src/core/*.cpp)
+srcs+=$(wildcard src/op/*.cpp)
 
 
-BUILD:=lib
-
-STATIC:=$(BUILD)/libarmednn.a
-
-SHARED:=$(BUILD)/libarmednn.so
+objs:=$(addprefix .temp/, $(srcs:.cpp=.o))
 
 
-all: static shared
+build:=lib
 
-static: $(OBJS)
-	mkdir -p $(BUILD)
-	ar -cvq $(STATIC) $^
+static:=$(build)/libarmednn.a
 
-shared: $(OBJS)
-	mkdir -p $(BUILD)
-	$(CC) -shared -o $(SHARED) $^
+shared:=$(build)/libarmednn.so
 
-test: shared
-	mkdir -p bin
-	$(CC) $(CFLAGS) -L $(BUILD) -larmednn -Wl,-rpath `pwd`/lib tests/0_data.cpp -o bin/0_data
 
-example: shared
-	mkdir -p bin
-	$(CC) $(CFLAGS) -L $(BUILD) -larmednn -Wl,-rpath `pwd`/lib example/ex1.cpp -o bin/ex1
+all: $(static) $(shared) tests example
 
-%.o:%.cpp
-	$(CC) -c $(CFLAGS)  $< -o $@
-	$(CC) -MM -MQ $@ $(CFLAGS) $< > $*.d
+$(static): $(objs)
+	@mkdir -p $(dir $(static))
+	ar -cvq $(ldflags) $@ $^
 
--include $(OBJS:.o=.d)
+$(shared): $(objs)
+	@mkdir -p $(dir $(shared))
+	$(cxx) -shared $(ldflags) -o $@ $^
+
+example: $(shared)
+	@make -C example
+tests: $(shared)
+	@make -C tests
+
+$(objs): .temp/%.o: %.cpp
+	@echo "$< -> $@"
+	@mkdir -p $(dir $@)
+	$(cxx) -c $(cxxflags)  $< -o $@
+	$(cxx) -MM -MQ $@ $(cxxflags) $< > .temp/$*.d
+
+-include $(objs:.o=.d)
 
 
 clean:
-	rm -f $(STATIC) $(SHARED)  $(OBJS)
+	@rm -f $(static) $(shared)  $(objs) $(objs:.o=.d)
+	@make -C tests clean
+	@make -C example clean
 
-.PHONY: example
+.PHONY: tests example  
