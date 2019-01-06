@@ -40,13 +40,17 @@ REGISTER_OP(_Copy_).set_num_input("1")
 
 
 
-class _Zero_: public Operator{
+class _Const_: public Operator{
     public:
         void inference(DataPtr& inputs, DataPtr& outputs, Arm& arm)
         {   
+            Matrix& value=arm.param("value");
+            outputs[0]->allocate(value.rows(),value.cols());
+            outputs[0]->get()=value;
         }
 };
-REGISTER_OP(_Zero_).set_num_input("1")
+REGISTER_OP(_Const_).add_param("value")
+                   .set_num_input("0")
                    .set_num_output("1");
 
 

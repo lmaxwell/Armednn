@@ -106,14 +106,11 @@ Armed::Armed( Arm& arm,std::unique_ptr<Operator> op):
         _num_input=ConfigHelp::InOutMapping(num_input_mapping)(_arm.config());
         _num_output=ConfigHelp::InOutMapping(num_output_mapping)(_arm.config());
 
-        auto state_regit=Registry::get().get_op(_op->type()).state;
 
-        // add state to arm
-        _arm.state()=state_regit;
-        for(auto& item: _arm.state())
-        {
-            _arm.state(item.first).set_shape(ParamHelp::ShapeMapping(state_regit[item.first].shape_mapping)(config_regit));
-        }
+        // num_state
+        std::string  num_state_mapping=Registry::get().get_op(_op->type()).num_state;
+        _num_state=ConfigHelp::InOutMapping(num_state_mapping)(_arm.config());
+
 }
 
 
@@ -132,6 +129,11 @@ uint32_t Armed::num_output()
     return _num_output;
 }
 
+uint32_t Armed::num_state()
+{
+    return _num_state;
+}
+
 std::string Armed::name()
 {
     return _op->name();
@@ -148,20 +150,20 @@ Node::Node(DataPtr& inputs, std::unique_ptr<Armed> armed):_inputs(inputs),_armed
     _id=objects_created;
 
     //check input size
-    CHECK(inputs.size()==_armed->num_input())
+    CHECK(inputs.size()==_armed->num_input()+_armed->num_state())
         <<"Input size not match\t"
         <<_armed->name();
-    
+
     //allocate output 
     for(uint32_t i=0;i<_armed->num_output();i++)
         _outputs.push_back(std::unique_ptr<Data>(new Data(_id)));
+    for(uint32_t i=0;i<_armed->num_state();i++)
+        _outputs.push_back(_inputs[_armed->num_input()+i]);
 }
 
 
-void Node::run(bool reset)
+void Node::run()
 {
-    if(reset)
-        _armed->reset();
     _armed->run(_inputs,_outputs);
 }
 

@@ -30,6 +30,7 @@ struct RegContent
     StateMap state;
     std::string num_input="?";
     std::string num_output="?";
+    std::string num_state="0";
 
 
 
@@ -77,6 +78,11 @@ struct RegContent
         return *this;
     }
 
+    RegContent& set_num_state(std::string _num_state)
+    {
+        num_state=_num_state;
+        return *this;
+    }
 
 };
 

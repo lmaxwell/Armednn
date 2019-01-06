@@ -23,9 +23,9 @@ class Fpooling: public Operator{
 };
 
 REGISTER_OP(Fpooling).add_config<uint32_t>("output_channels","output channels")
-                     .add_state("h",{"1","output_channels"})
                      .set_num_input("2")
-                     .set_num_output("1");
+                     .set_num_output("1")
+                     .set_num_state("1");
 
 }// namespace Armednn
 

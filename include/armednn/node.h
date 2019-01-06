@@ -47,7 +47,6 @@ struct Arm
     private:
         ConfigMap _config;
         ParamMap _param;
-        StateMap _state;
     public:
         explicit Arm()=default;
         explicit Arm(ConfigMap& config, ParamMap& param);
@@ -60,15 +59,6 @@ struct Arm
         Matrix& param(std::string name);
         ParamMap& param();
         
-        State& state(std::string name)
-        {
-            return _state[name];
-        }
-
-        StateMap& state()
-        {
-            return _state;
-        }
 };
 
 
@@ -93,6 +83,7 @@ struct Armed
         std::unique_ptr<Operator> _op;
         uint32_t _num_input=0;
         uint32_t _num_output=0;
+        uint32_t _num_state=0;
 
     public:
         explicit Armed( Arm& arm,std::unique_ptr<Operator> op);
@@ -103,16 +94,10 @@ struct Armed
 
         uint32_t num_input();
         uint32_t num_output();
+        uint32_t num_state();
         std::string name();
         std::string type();
 
-        void reset()
-        {
-            for(auto& item:_arm.state())
-            {
-                _arm.state(item.first).reset();
-            }
-        }
 
 };
 
@@ -128,13 +113,12 @@ struct Node: public Counter<Node>
         DataPtr _inputs;
         DataPtr _outputs;
         std::unique_ptr<Armed> _armed;
-        StateMap _state;
     public:
         explicit Node(DataPtr& inputs, std::unique_ptr<Armed> armed);
 
         ~Node(){std::cout<<"Node destory"<<std::endl;}
 
-        void run(bool reset=true);
+        void run();
 
         DataPtr& input();
 
@@ -151,10 +135,6 @@ struct Node: public Counter<Node>
 
         void feed(Matrix& in);
 
-        void reset()
-        {
-            _armed->reset();
-        }
 };
 
 typedef std::vector<std::unique_ptr<Node>> NodePtr;

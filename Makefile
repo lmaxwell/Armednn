@@ -26,21 +26,27 @@ static:=$(build)/libarmednn.a
 
 shared:=$(build)/libarmednn.so
 
+debug : cxxflags+=-g 
+debug: all
+
+release: cxxflags+=-DNDEBUG
+release: all
 
 all: $(static) $(shared) tests example
 
 $(static): $(objs)
 	@mkdir -p $(dir $(static))
-	ar -cvq $(ldflags) $@ $^
+	ar rcs $(ldflags) $@ $^
+	# -cvq 
 
 $(shared): $(objs)
 	@mkdir -p $(dir $(shared))
 	$(cxx) -shared $(ldflags) -o $@ $^
 
 example: $(shared)
-	@make -C example
+	+$(MAKE) -C example 
 tests: $(shared)
-	@make -C tests
+	+$(MAKE) -C tests 
 
 $(objs): .temp/%.o: %.cpp
 	@echo "$< -> $@"
@@ -53,7 +59,7 @@ $(objs): .temp/%.o: %.cpp
 
 clean:
 	@rm -f $(static) $(shared)  $(objs) $(objs:.o=.d)
-	@make -C tests clean
-	@make -C example clean
+	$(MAKE) -C tests clean
+	$(MAKE) -C example clean
 
-.PHONY: tests example  
+.PHONY: release debug all tests example clean 

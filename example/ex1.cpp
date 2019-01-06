@@ -72,6 +72,19 @@ std::unique_ptr<Node> make_input(std::string name)
     return make_node(inputs,std::move(armed));
 }
 
+std::unique_ptr<Node> make_state(std::string name, Matrix value )
+{
+    auto op=make_op("_Const_",name);
+    ConfigMap config;
+    ParamMap param;
+    param.insert({"value",{value}});
+    Arm arm(config,param);
+    auto armed=make_armed(arm,std::move(op));
+    DataPtr inputs;
+    return make_node(inputs,std::move(armed));
+}
+
+
 /*
 std::unique_ptr<Node> make_node(DataPtr&& inputs, Arm& arm, std::string type, std::string name)
 {
@@ -183,7 +196,8 @@ void ex3()
     config_fpool_0.insert({"output_channels",{(uint32_t)(C/2)}});
     Arm arm_fpool_0(config_fpool_0);
     auto armed_fpool_0=make_armed(arm_fpool_0,std::move(fpool_0));
-    auto node4=make_node(node2->output(),std::move(armed_fpool_0));
+    auto init_state_node=make_state("init_state",Matrix::Zero(1,C/2));
+    auto node4=make_node({node2->output(0),node2->output(1),init_state_node->output(0)},std::move(armed_fpool_0));
 
 
 
@@ -197,8 +211,9 @@ void ex3()
     node1->run();
     node2->run();
     node3->run();
+    init_state_node->run();
     node4->run();
-    node4->run(false);
+    node4->run();
     node4->run();
 
     INFO<<std::endl<<node1->output(0)->get();
@@ -234,6 +249,13 @@ int main()
 
 
     auto input_node=make_input("input");
+    auto init_state_node=make_state("init_state",Matrix::Zero(4,4));
+
+    INFO<<init_state_node->output(0)->get();
+    init_state_node->run();
+    INFO<<init_state_node->output(0)->get();
+
+
 
 
     std::unordered_map<std::string,ConfigMap> test;
