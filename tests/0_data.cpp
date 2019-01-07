@@ -38,6 +38,10 @@ void test2()
 
 
     Data d;
+    d.allocate(2,2);
+    timer.reset();
+    d.allocate(2*NUM,2*NUM);
+    INFO<<"malloc, cost:"<<timer.elapsed();
     d.allocate(2*NUM,2*NUM);
     timer.reset();
     d.allocate(NUM,NUM);

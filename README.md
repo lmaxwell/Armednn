@@ -155,6 +155,33 @@ d.allocate(1000,1000); // mat is useless now
 auto mat2=d.get(); // call get() again after every allocate()
 mat2=b;
 
+```
+
+## 2. Data 
+
+```c++
+Data d; 
+
+d.allocate(10,10); // allocate 10x10
+
+d.allocate(5,5); // no allocate here;
+
+d.allocate(100,1000); // re allocate
+
+audo mat=d.get() // return a Eigen::Map<Matrix>, not own any data, is a Mapping of "Real Matrix" in Data
+
+Matrix a(100,100);
+
+d.get()=a; // assign, 
+mat=a; // the same 
+
+
+// make sure enough size before assign
+Matrix b(1000,1000);
+d.allocate(1000,1000); // mat is useless now
+auto mat2=d.get(); // call get() again after every allocate()
+mat2=b;
+
 
 ```
 

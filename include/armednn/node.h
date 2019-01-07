@@ -21,8 +21,10 @@ struct Data
         Matrix _value;
         uint32_t _id=0;
         
-        uint32_t _rows=0;
-        uint32_t _cols=0;
+        uint32_t _rows=0; // map _rows
+        uint32_t _cols=0; // map _cols
+
+        uint32_t _size=0; //true size
 
     public:
         

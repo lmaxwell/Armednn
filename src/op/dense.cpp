@@ -9,7 +9,7 @@ void Dense::inference(DataPtr& inputs, DataPtr& outputs, Arm& arm)
     auto output=outputs[0]->get();
     output.noalias()=input*arm.param("weight");
     output+=arm.param("bias").replicate(output.rows(),1);
-    OpSub::activation(arm.config<std::string>("activation"))(output);
+    activation(arm.config<std::string>("activation"))(output);
 }
 
 }//namespace Armednn

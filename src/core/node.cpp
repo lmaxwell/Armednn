@@ -12,7 +12,7 @@ Data::Data(uint32_t id):_id(id){
 
 void Data::allocate(uint32_t rows,uint32_t cols)
 {
-    if(rows*cols<=(uint32_t)_value.size())   
+    if(rows*cols<=_size)   
     {
         _rows=rows;
         _cols=cols;
@@ -23,6 +23,7 @@ void Data::allocate(uint32_t rows,uint32_t cols)
         DEBUG<<"allocate(id="<<_id<<") "<<_value.rows()<<" "<<_value.cols();
         _rows=rows;
         _cols=cols;
+        _size=rows*cols;
     }
 }
 
