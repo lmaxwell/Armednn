@@ -1,32 +1,134 @@
 ## INSTALL
 
 ```
+git submodule init 
+git submodule update
 make 
-make example test
+
 ```
 
 ## 1. Usage
 
-### 1.1 definition
- 
-* arm = { config , param } 
- 
-* arm + op =armed; // check arm and op compatible
-
-* armed + inputs = node; // node { armed , inputs, outputs }, outputs is auto allocated 
-
-### 1.2  interface
+### 1.1 simple dense 
 
 ```c++
-std::unique_ptr<Operator> make_op(std::string type,std::string name)
+    int L=2000;
+    int C=256;
+
+    auto input_node=make_input("input");
 
 
-std::unique_ptr<Armed> make_armed(Arm& arm, std::unique_ptr<Operator> op)
+    ConfigMap config;
+    config.insert({"activation",{(std::string)"tanh"}});
+    config.insert({"dim0",{(uint32_t)C}});
+    config.insert({"dim1",{(uint32_t)C}});
+    ParamMap param;
+    param.insert({"weight",{Matrix::Identity(C,C)}});
+    param.insert({"bias",{Matrix::Ones(1,C)}});
+
+    Arm arm(config,param);
+
+    auto dense_0=make_node("Dense",arm,input_node->output(),"dense-0");
+    auto dense_1=make_node("Dense",arm,dense_0->output(),"dense-1");
+    auto dense_2=make_node("Dense",arm,dense_1->output(),"dense-2");
+    auto dense_3=make_node("Dense",arm,dense_2->output(),"dense-3");
 
 
-std::unique_ptr<Node> make_node(DataPtr& inputs, std::unique_ptr<Armed> armed)
+    Matrix temp=Matrix::Identity(L,C);
+    input_node->feed(temp);
+
+    dense_0->run();
+    dense_1->run();
+    dense_2->run();
+    dense_3->run();
+```
+
+
+
+### 1.2  stateful 
+
+```c++
+    int L=2000;
+    int C=256;
+
+    auto input_node=make_input("input");
+
+
+    ConfigMap config;
+    config.insert({"activation",{(std::string)"tanh"}});
+    config.insert({"dim0",{(uint32_t)C}});
+    config.insert({"dim1",{(uint32_t)C}});
+    ParamMap param;
+    param.insert({"weight",{Matrix::Identity(C,C)}});
+    param.insert({"bias",{Matrix::Ones(1,C)}});
+
+    Arm arm(config,param);
+
+    auto dense_0=make_node("Dense",arm,input_node->output(),"dense-0");
+   
+    
+    ConfigMap config_split_0;
+    config_split_0.insert({"num_split",{(uint32_t)2}});
+    Arm arm_split_0(config_split_0);
+  
+    auto split_0=make_node("Split",arm_split_0,dense_0->output(),"split-0");
+
+
+    
+    ConfigMap config_fpool_0;
+    config_fpool_0.insert({"output_channels",{(uint32_t)(C/2)}});
+    Arm arm_fpool_0(config_fpool_0);
+    auto init_state_node=make_state("init_state",Matrix::Zero(1,C/2));
+    auto fpool_0=make_node("Fpooling",arm_fpool_0, {split_0->output(0),split_0->output(1),init_state_node->output(0)},"fpool-0");
+    
+    Matrix temp=Matrix::Identity(L,C);
+    input_node->feed(temp);
+
+    dense_0->run();
+    split_0->run();
+    init_state_node->run(); 
+    fpool_0->run();
+    fpool_0->run();
+    fpool_0->run();
+    init_state_node->run(); // reset state
+    fpool_0->run();
+```
+### 1.3 share node memory
+```
+    int L=2000;
+    int C=256;
+
+    auto input_node=make_input("input");
+
+
+    ConfigMap config;
+    config.insert({"activation",{(std::string)"tanh"}});
+    config.insert({"dim0",{(uint32_t)C}});
+    config.insert({"dim1",{(uint32_t)C}});
+    ParamMap param;
+    param.insert({"weight",{Matrix::Identity(C,C)}});
+    param.insert({"bias",{Matrix::Ones(1,C)}});
+
+    Arm arm(config,param);
+
+    auto dense_0=make_node("Dense",arm,input_node->output(),"dense-0");
+    auto dense_1=make_node("Dense",arm,dense_0->output(),"dense-1");
+    auto dense_2=make_node("Dense",arm,dense_1->output(),"dense-2",dense_0->output()); //share output with dense_0
+    auto dense_3=make_node("Dense",arm,dense_2->output(),"dense-3",dense_1->output()); //share output with dense_1
+
+
+    Matrix temp=Matrix::Identity(L,C);
+    input_node->feed(temp);
+
+    dense_0->run();
+    dense_1->run();
+    dense_2->run();
+    dense_3->run();
+
+    INFO<<dense_3->output(0)->get();
 
 ```
+
 
 ## 2. Data 
 
