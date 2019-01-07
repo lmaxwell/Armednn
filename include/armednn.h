@@ -6,7 +6,7 @@
 #include "armednn/config.h"
 #include "armednn/param.h"
 #include "armednn/op_regist.h"
-#include "armednn/op_sub.h"
+#include "armednn/activation.h"
 #include "armednn/operator.h"
 #include "armednn/node.h"
 #include "armednn/special.h"
