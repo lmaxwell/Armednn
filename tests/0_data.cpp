@@ -24,7 +24,7 @@ void test2()
 {
 
     Timer timer;
-    int NUM=20;
+    int NUM=40;
     Matrix a(NUM,NUM);
 
     Matrix b(NUM,NUM);
@@ -42,6 +42,7 @@ void test2()
     timer.reset();
     d.allocate(2*NUM,2*NUM);
     INFO<<"malloc, cost:"<<timer.elapsed();
+    d.allocate(2*NUM,2*NUM);
     timer.reset();
     d.allocate(NUM,NUM);
     INFO<<"no malloc, cost:"<<timer.elapsed();
