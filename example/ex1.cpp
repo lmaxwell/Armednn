@@ -1,4 +1,5 @@
 #include "armednn.h"
+#include "im2col.h"
 
 using namespace Armednn;
 
@@ -288,6 +289,66 @@ void ex5()
 
 }
 
+void ex6()
+{
+
+
+    int L=2000;
+    int C=256;
+
+    auto input_node=make_input("input");
+
+    uint32_t filter_width=10;
+    ConfigMap config_conv1d;
+    config_conv1d.insert({"filter_width",{filter_width}});
+    config_conv1d.insert({"input_channels",{(uint32_t)C}});
+    config_conv1d.insert({"output_channels",{(uint32_t)C}});
+    config_conv1d.insert({"padding",{(std::string)"same"}});
+    config_conv1d.insert({"activation",{(std::string)"tanh"}});
+    ParamMap param_conv1d;
+    param_conv1d.insert({"weight",{Matrix::Identity(C*filter_width,C)}});
+    param_conv1d.insert({"bias",{Matrix::Ones(1,C)}});
+    Arm arm_conv1d(config_conv1d,param_conv1d);
+    auto conv1d_0=make_node("Conv1d",arm_conv1d,input_node->output(),"conv1d-0");
+
+    ConfigMap config;
+    config.insert({"activation",{(std::string)"tanh"}});
+    config.insert({"dim0",{(uint32_t)C}});
+    config.insert({"dim1",{(uint32_t)C}});
+    ParamMap param;
+    param.insert({"weight",{Matrix::Identity(C,C)}});
+    param.insert({"bias",{Matrix::Ones(1,C)}});
+
+    Arm arm(config,param);
+
+    auto dense_1=make_node("Dense",arm,conv1d_0->output(),"dense-1");
+    auto dense_2=make_node("Dense",arm,dense_1->output(),"dense-2"); 
+    auto dense_3=make_node("Dense",arm,dense_2->output(),"dense-3");
+
+
+
+    Timer timer;
+
+    for(int i=0;i<6;i++)
+    {
+        Matrix temp=Matrix::Random(L,C);
+        input_node->feed(temp);
+        INFO<<"begin";
+        timer.reset();
+        conv1d_0->run();
+        INFO<<"conv1d end cost:"<< timer.elapsed();
+        timer.reset();
+        dense_1->run();
+        dense_2->run();
+        dense_3->run();
+        INFO<<"all end cost:"<< timer.elapsed();
+        L=L+100;
+    }
+
+    //INFO<<dense_3->output(0)->get();
+
+}
+
 
 int main()
 {
@@ -296,9 +357,10 @@ int main()
     ex1();
     ex2();
     ex3();
-    */
     ex4();
     ex5();
+    */
+    ex6();
 
 
     std::unordered_map<std::string,ConfigMap> test;

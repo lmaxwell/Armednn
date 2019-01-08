@@ -3,7 +3,7 @@
 cxx:=g++
 
 #includes
-cxxflags+= -I../include -I../third_party/eigen
+cxxflags+= -I../include -I../third_party/eigen -I../src/op
 
 
 srcs:=$(wildcard *.cpp)
