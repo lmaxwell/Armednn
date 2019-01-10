@@ -1,5 +1,4 @@
 #include "armednn.h"
-#include "im2col.h"
 
 using namespace Armednn;
 
@@ -361,6 +360,7 @@ int main()
     ex5();
     */
     ex6();
+
 
 
     std::unordered_map<std::string,ConfigMap> test;

@@ -9,9 +9,6 @@ namespace Armednn
 from pytorch 
 https://github.com/pytorch/pytorch/blob/master/LICENSE
 */
-
-bool IsAGeZeroAndALtB(const int a, const int b) ;
-
 template <typename TData>
  void Im2Col3dNHWC(
         const int C,

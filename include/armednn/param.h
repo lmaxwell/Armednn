@@ -64,6 +64,7 @@ class Param
         Param()=default;
 
         Param(std::vector<std::string>  _shape_mapping):shape_mapping(_shape_mapping){};
+        Param(std::function<std::vector<uint32_t>(ConfigMap& config)> _shape_func):shape_func(_shape_func){};
 
         Param(Matrix&& _value):value(std::move(_value)){};
 
@@ -71,7 +72,7 @@ class Param
 
 
         std::vector<std::string> shape_mapping;
-        std::function<std::vector<uint32_t> (Arm& arm)> shape_func;
+        std::function<std::vector<uint32_t> (ConfigMap& config)> shape_func=nullptr;
 
         Matrix value;
 
@@ -84,74 +85,6 @@ class Param
 };
 
 typedef  std::unordered_map<std::string,Param> ParamMap;
-
-struct State 
-{
-
-    private:
-
-        Matrix _value;
-        std::vector<uint32_t> _shape;
-        std::function<std::vector<uint32_t> (Arm& arm)> _shape_func;
-
-    public:
-
-        std::vector<std::string> shape_mapping;
-
-        State()=default;
-        State(std::vector<std::string>  _shape_mapping):shape_mapping(_shape_mapping){};
-
-        bool has_value()
-        {
-            return _value.data()!=nullptr;
-        }
-
-        Matrix& get()
-        {
-            return _value;
-        }
-
-        void set(Matrix& value)
-        {
-            _value=value;
-        }
-
-        void set(Matrix&& value)
-        {
-            _value=std::move(value);
-        }
-
-        void set_shape(std::vector<uint32_t> shape)
-        {
-            _shape=shape;
-        }
-
-        std::vector<uint32_t> shape()
-        {
-            return _shape;
-        }
-
-        void reset()
-        {
-            _value.resize(0,0);
-        }
-};
-
-
-typedef std::unordered_map<std::string,State> StateMap;
-
-struct StateHolder
-{
-    private:
-        std::unordered_map<std::string,State> _state;
-    public:
-        State& operator()(std::string name)
-        {
-            CHECK(_state.find(name)!=_state.end())
-                <<"state "<<name<<" not found!";
-            return _state[name];
-        }
-};
 
 
 namespace ParamHelp

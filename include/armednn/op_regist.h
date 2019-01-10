@@ -27,7 +27,6 @@ struct RegContent
     CreateFun create;
     ConfigMap config;
     ParamMap param;
-    StateMap state;
     std::string num_input="?";
     std::string num_output="?";
     std::string num_state="0";
@@ -60,11 +59,12 @@ struct RegContent
         return *this;
     }
 
-    RegContent& add_state(std::string name, std::vector<std::string> shape_mapping=std::vector<std::string>())
+    RegContent& add_param(std::string name, std::function<std::vector<uint32_t> (ConfigMap& config)> shape_func )
     {
-        state[name]=State(shape_mapping);
+        param[name]=Param(shape_func);
         return *this;
     }
+
 
     RegContent& set_num_input(std::string _num_input)
     {

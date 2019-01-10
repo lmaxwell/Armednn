@@ -10,7 +10,7 @@ bool IsAGeZeroAndALtB(const int a, const int b)
 }
 
 template <typename TData>
- void Im2Col3dNHWCImpl(
+ void Im2Col3dNHWC(
         const int C,
         const int T,
         const int H,
@@ -89,8 +89,7 @@ template <typename TData>
         t_pad += stride_t;
     } // t
 }
-template <>
- void Im2Col3dNHWC<float>(
+template void Im2Col3dNHWC<float>(
         const int C,
         const int T,
         const int H,
@@ -112,32 +111,7 @@ template <>
         const int stride_w,
         const float* img_data,
         float* col_data,
-        const int groups)
-{
+        const int groups);
 
- Im2Col3dNHWCImpl<float>(
-         C,
-         T,
-         H,
-         W,
-         kernel_t,
-         kernel_h,
-         kernel_w,
-         dilation_t,
-         dilation_h,
-         dilation_w,
-         pad_p, // previous frame
-         pad_t, // top
-         pad_l, // left
-         pad_n, // next frame
-         pad_b, // bottom
-         pad_r, // right
-         stride_t,
-         stride_h,
-         stride_w,
-         img_data,
-         col_data,
-         groups);
-}
 
 }//namespace Armednn
