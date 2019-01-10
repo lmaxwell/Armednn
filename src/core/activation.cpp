@@ -26,7 +26,7 @@ float __sigmoid(float x)
 
 float __relu(float x)
 {
-    if(x>=0)
+    if(x>0.0f)
         return x;
     else
         return 0.0f;
@@ -116,6 +116,20 @@ bool _softmax(Eigen::Ref<Matrix> a)
     return true;
 }
 
+//relu
+bool _relu(Eigen::Ref<Matrix> a)
+{
+    for(uint32_t i=0;i<a.rows();i++)
+    {
+        for(uint32_t j=0;j<a.cols();j++)
+        {
+            if (a(i,j)<0.0f)
+                a(i,j)=0.0f;
+        }
+    }
+    return true;
+}
+
 //  "identity"
 bool _identity(Eigen::Ref<Matrix> a)
 {
@@ -138,13 +152,15 @@ activaition("tanh")(a)
 ActFunMat activation(std::string name)
 {
     if(name == "tanh")
-        return &_tanh;
+        return _tanh;
     if(name == "identity")
-        return &_identity;
+        return _identity;
+    if(name == "relu")
+        return _relu;
     if(name == "sigmoid")
-        return &_sigmoid;
+        return _sigmoid;
     if(name == "softmax")
-        return &_softmax;
+        return _softmax;
 
     DEBUG<<"activation "<<name<<" not implemented!";
     return &_no_impl;

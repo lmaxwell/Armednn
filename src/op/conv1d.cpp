@@ -8,7 +8,7 @@ namespace Armednn
 void Conv1d::inference(DataPtr& inputs, DataPtr& outputs, Arm& arm)
 {
     auto input=inputs[0]->get();
-    ToColHelper helper(input.rows(),
+    ToColHelper1D helper(input.rows(),
                 input.cols(),
                 arm.config<uint32_t>("filter_width"),
                 1,

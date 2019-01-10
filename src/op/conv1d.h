@@ -20,7 +20,7 @@ namespace Armednn
 
 
 
-struct  ToColHelper
+struct  ToColHelper1D
 {
        uint32_t length=0;
        uint32_t channels=0;
@@ -36,8 +36,8 @@ struct  ToColHelper
 
        /* dilation and stride are not supported now 
         */ 
-       explicit ToColHelper()=default;
-       explicit ToColHelper(uint32_t _length, uint32_t _channels, uint32_t _filter_width, uint32_t _stride, uint32_t _dilation, std::string _padding):
+       explicit ToColHelper1D()=default;
+       explicit ToColHelper1D(uint32_t _length, uint32_t _channels, uint32_t _filter_width, uint32_t _stride, uint32_t _dilation, std::string _padding):
            length(_length),
            channels(_channels),
            filter_width(_filter_width),
@@ -104,9 +104,21 @@ class Conv1d: public Operator{
         void inference(DataPtr& inputs, DataPtr& outputs, Arm& arm);
 
     private:
-       ToColHelper tocol_helper; 
        Data col;
 };
+
+
+
+std::vector<uint32_t> conv1d_shape_func(ConfigMap& config)
+{
+    uint32_t filter_width=0;
+    uint32_t input_channels=0;
+    uint32_t output_channels=0;
+    config["filter_width"].get<uint32_t>(filter_width);
+    config["input_channels"].get<uint32_t>(input_channels);
+    config["output_channels"].get<uint32_t>(output_channels);
+    return {filter_width*input_channels, output_channels};
+}
 
 
 
@@ -115,7 +127,7 @@ REGISTER_OP(Conv1d).add_config<uint32_t>("filter_width","number of filters")
                 .add_config<uint32_t>("output_channels","output channels")
                 .add_config<std::string>("padding","padding: same | valid")
                 .add_config<std::string>("activation","activation function type")
-                .add_param("weight") // store as [filter_width  input_channels , output_channels]
+                .add_param("weight",conv1d_shape_func) // store as [filter_width  input_channels , output_channels]
                 .add_param("bias",{"1","output_channels"})
                 .set_num_input("1")
                 .set_num_output("1");

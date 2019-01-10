@@ -94,7 +94,7 @@ make
     fpool_0->run();
 ```
 ### 1.3 share node memory
-```
+```c++
     int L=2000;
     int C=256;
 
@@ -113,9 +113,16 @@ make
 
     auto dense_0=make_node("Dense",arm,input_node->output(),"dense-0");
     auto dense_1=make_node("Dense",arm,dense_0->output(),"dense-1");
-    auto dense_2=make_node("Dense",arm,dense_1->output(),"dense-2",dense_0->output()); //share output with dense_0
-    auto dense_3=make_node("Dense",arm,dense_2->output(),"dense-3",dense_1->output()); //share output with dense_1
-
+    auto dense_2=make_node("Dense",arm,dense_1->output(),"dense-2",dense_0->output()); //share memory with dense_0
+    auto dense_3=make_node("Dense",arm,dense_2->output(),"dense-3",dense_1->output()); //share memory with dense_1 
+    
+    /*
+    can also be
+    auto dense_0=make_node("Dense",arm,input_node->output(),"dense-0");
+    auto dense_1=make_node("Dense",arm,dense_0->output(),"dense-1",input_node->output()); //share
+    auto dense_2=make_node("Dense",arm,dense_1->output(),"dense-2",dense_0->output()); //share 
+    auto dense_3=make_node("Dense",arm,dense_2->output(),"dense-3",input_node->output()); //share 
+    */
 
     Matrix temp=Matrix::Identity(L,C);
     input_node->feed(temp);
@@ -130,32 +137,7 @@ make
 ```
 
 
-## 2. Data 
 
-```c++
-Data d; 
-
-d.allocate(10,10); // allocate 10x10
-
-d.allocate(5,5); // no allocate here;
-
-d.allocate(100,1000); // re allocate
-
-audo mat=d.get() // return a Eigen::Map<Matrix>, not own any data, is a Mapping of "Real Matrix" in Data
-
-Matrix a(100,100);
-
-d.get()=a; // assign, 
-mat=a; // the same 
-
-
-// make sure enough size before assign
-Matrix b(1000,1000);
-d.allocate(1000,1000); // mat is useless now
-auto mat2=d.get(); // call get() again after every allocate()
-mat2=b;
-
-```
 
 ## 2. Data 
 
@@ -220,22 +202,7 @@ add_param(std::string name, std::function<std::vector<uint32_t>(ConfigMap&)> sha
 * shape_mapping: shape mapping to config names
 
 * shape_func:   a function to get shape from Config
-### state
 
-for stateful operation
-```C++
-REGISTER_OP(Fpooling).add_config<uint32_t>("output_channels","output channels")
-                     .add_state("h",{"1","output_channels"})
-                     .set_num_input("2")
-                     .set_num_output("1");
-```
-```c++
-add_state(std::string name,std::vector<std::string> shape_mapping)
-add_state(std::string name,std::function<std::vector<uint32_t>(ConfigMap&)> shape_func)
-```
-* name: state name
-* shape_mapping: shape_mapping to config names
-* shape_func:   a function to get shape from Config
 
 ### num_input & num_output
 ```c++

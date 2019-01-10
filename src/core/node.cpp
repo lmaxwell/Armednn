@@ -99,6 +99,13 @@ Armed::Armed( Arm& arm,std::unique_ptr<Operator> op):
                     <<"Shape not match!\t"
                     <<_op->name()<<" "<<item.first;
             }
+            else if(param_regit[item.first].shape_func != nullptr )
+            {
+                auto shape=param_regit[item.first].shape_func(_arm.config());
+                CHECK(shape==item.second.shape())
+                    <<"Shape not match!\t"
+                    <<_op->name()<<" "<<item.first;
+            }
         }
 
         // num_input & num_output
