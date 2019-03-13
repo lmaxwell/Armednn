@@ -90,7 +90,7 @@ struct Armed
     public:
         explicit Armed( Arm& arm,std::unique_ptr<Operator> op);
 
-        ~Armed(){std::cout<<"Armed destory"<<std::endl;}
+        ~Armed(){DEBUG<<"Armed destory";}
         
         void run(DataPtr& inputs, DataPtr& outputs);
 
@@ -118,7 +118,7 @@ struct Node: public Counter<Node>
     public:
         explicit Node(DataPtr& inputs, std::unique_ptr<Armed> armed, DataPtr outputs=DataPtr());
 
-        ~Node(){std::cout<<"Node destory"<<std::endl;}
+        ~Node(){DEBUG<<"Node destory";}
 
         void run();
 
