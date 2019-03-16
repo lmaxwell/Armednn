@@ -7,18 +7,21 @@ cxx:=g++
 #includes
 cxxflags+= -Iinclude -Ithird_party/eigen
 
-# mkl 
-#eigen_use_mkl_all
 ldflags:=
-
-
 
 srcs:=$(wildcard src/core/*.cpp)
 srcs+=$(wildcard src/op/*.cpp)
-
+ifneq ($(OTHEROP),)
+	srcs+=$(wildcard $(OTHEROP)/*.cpp)
+endif
 
 objs:=$(addprefix .temp/, $(srcs:.cpp=.o))
 
+# mkl 
+ifneq ($(MKLROOT),)
+	MKLROOT_PATH:=$(shell cd $(MKLROOT);pwd)
+	cxxflags+= -I$(MKLROOT)/include -DEIGEN_USE_MKL_ALL -DMKL_LP64 -m64
+endif
 
 build:=lib
 
@@ -44,9 +47,9 @@ $(shared): $(objs)
 	$(cxx) -shared $(ldflags) -o $@ $^
 
 example: $(shared)
-	+$(MAKE) -C example 
+	+$(MAKE) -C example MKLROOT=$(MKLROOT_PATH) 
 tests: $(shared)
-	+$(MAKE) -C tests 
+	+$(MAKE) -C tests MKLROOT=$(MKLROOT_PATH)
 
 $(objs): .temp/%.o: %.cpp
 	@echo "$< -> $@"
