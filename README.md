@@ -34,7 +34,7 @@ MKLROOT/include and MKLROOT/lib/intel64_lin should exist
         ConfigMap config;
         config.insert({"dim0", {input_channels}});
         config.insert({"dim1", {output_channels}});
-	    config.insert({"activation", {activation}});
+        config.insert({"activation", {activation}});
 
         auto weight = Eigen::Map<Matrix>(Weights, input_channels, output_channels);
         auto offset = input_channels * output_channels;
