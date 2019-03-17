@@ -11,10 +11,6 @@ ldflags:=
 
 srcs:=$(wildcard src/core/*.cpp)
 srcs+=$(wildcard src/op/*.cpp)
-ifneq ($(OTHEROP),)
-	srcs+=$(wildcard $(OTHEROP)/*.cpp)
-endif
-
 objs:=$(addprefix .temp/, $(srcs:.cpp=.o))
 
 # mkl 

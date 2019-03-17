@@ -4,11 +4,6 @@
 git submodule init 
 git submodule update
 ```
-### add your own operators 
-```
-make OTHEROP=your/op/path 
-```
-files in your op path should like the files in Armednn/src/op
 
 ### compile Eigen without MKL 
 ```
@@ -26,38 +21,26 @@ MKLROOT/include and MKLROOT/lib/intel64_lin should exist
 ### 1.1 simple dense 
 
 ```c++
-
-    std::unique_ptr<Node> make_Dense(float* Weights, std::string name, 
-        uint32_t input_channels, uint32_t output_channels, std::string activation,
-        DataPtr inputs, DataPtr outputs = DataPtr())
-    {
-        ConfigMap config;
-        config.insert({"dim0", {input_channels}});
-        config.insert({"dim1", {output_channels}});
-        config.insert({"activation", {activation}});
-
-        auto weight = Eigen::Map<Matrix>(Weights, input_channels, output_channels);
-        auto offset = input_channels * output_channels;
-        auto bias = Eigen::Map<Matrix>(Weights + offset, 1, output_channels);
-
-        ParamMap param;
-        param.insert({"weight", {weight}});
-        param.insert({"bias",{Matrix::Ones(1,C)}});
-        Arm arm(config, param);
-
-        return std::move(make_node("Dense", arm, inputs, name, outputs));
-    }
-
     int L=2000;
     int C=256;
 
     auto input_node=make_input("input");
 
-    auto Weight = Matrix::Ones(C + 1, C);
-    auto dense_0 = make_Dense(Weight.data(), "dense-0", C, C, "tanh", input_node->output());
-    auto dense_1 = make_Dense(Weight.data(), "dense-1", C, C, "tanh", dense_0->output());
-    auto dense_2 = make_Dense(Weight.data(), "dense-2", C, C, "tanh", dense_1->output());
-    auto dense_3 = make_Dense(Weight.data(), "dense-3", C, C, "tanh", dense_2->output());
+
+    ConfigMap config;
+    config.insert({"activation",{(std::string)"tanh"}});
+    config.insert({"dim0",{(uint32_t)C}});
+    config.insert({"dim1",{(uint32_t)C}});
+    ParamMap param;
+    param.insert({"weight",{Matrix::Identity(C,C)}});
+    param.insert({"bias",{Matrix::Ones(1,C)}});
+
+    Arm arm(config,param);
+
+    auto dense_0=make_node("Dense",arm,input_node->output(),"dense-0");
+    auto dense_1=make_node("Dense",arm,dense_0->output(),"dense-1");
+    auto dense_2=make_node("Dense",arm,dense_1->output(),"dense-2");
+    auto dense_3=make_node("Dense",arm,dense_2->output(),"dense-3");
 
 
     Matrix temp=Matrix::Identity(L,C);
@@ -126,25 +109,28 @@ MKLROOT/include and MKLROOT/lib/intel64_lin should exist
 
     auto input_node=make_input("input");
 
-    auto Weight = Matrix::Ones(C + 1, C);
-    SharedData shared;
 
-    auto dense_0 = make_Dense(Weight.data(), "dense-0", C, C, "tanh", input_node->output());
-    auto dense_1 = make_Dense(Weight.data(), "dense-1", C, C, "tanh", dense_0->output());
-    shared.put(dense_1->input());
-    auto dense_2 = make_Dense(Weight.data(), "dense-2", C, C, "tanh", dense_1->output(), shared.get(1));//share
-    shared.put(dense_2->input());
-    auto dense_3 = make_Dense(Weight.data(), "dense-3", C, C, "tanh", dense_2->output(), shared.get(1));//share
+    ConfigMap config;
+    config.insert({"activation",{(std::string)"tanh"}});
+    config.insert({"dim0",{(uint32_t)C}});
+    config.insert({"dim1",{(uint32_t)C}});
+    ParamMap param;
+    param.insert({"weight",{Matrix::Identity(C,C)}});
+    param.insert({"bias",{Matrix::Ones(1,C)}});
+
+    Arm arm(config,param);
+
+    auto dense_0=make_node("Dense",arm,input_node->output(),"dense-0");
+    auto dense_1=make_node("Dense",arm,dense_0->output(),"dense-1");
+    auto dense_2=make_node("Dense",arm,dense_1->output(),"dense-2",dense_0->output()); //share memory with dense_0
+    auto dense_3=make_node("Dense",arm,dense_2->output(),"dense-3",dense_1->output()); //share memory with dense_1 
     
     /*
     can also be
-    auto dense_0 = make_Dense(Weight.data(), "dense-0", C, C, "tanh", input_node->output());
-    shared.put(dense_0->input());
-    auto dense_1 = make_Dense(Weight.data(), "dense-1", C, C, "tanh", dense_0->output(), shared.get(1));//share
-    shared.put(dense_1->input());
-    auto dense_2 = make_Dense(Weight.data(), "dense-2", C, C, "tanh", dense_1->output(), shared.get(1));//share
-    shared.put(dense_2->input());
-    auto dense_3 = make_Dense(Weight.data(), "dense-3", C, C, "tanh", dense_2->output(), shared.get(1));//share
+    auto dense_0=make_node("Dense",arm,input_node->output(),"dense-0");
+    auto dense_1=make_node("Dense",arm,dense_0->output(),"dense-1",input_node->output()); //share
+    auto dense_2=make_node("Dense",arm,dense_1->output(),"dense-2",dense_0->output()); //share 
+    auto dense_3=make_node("Dense",arm,dense_2->output(),"dense-3",input_node->output()); //share 
     */
 
     Matrix temp=Matrix::Identity(L,C);
@@ -159,6 +145,66 @@ MKLROOT/include and MKLROOT/lib/intel64_lin should exist
 
 ```
 
+### 1.4 share node memory by SharedData
+```c++
+    std::unique_ptr<Node> make_dense(float* Weights, std::string name, 
+        uint32_t input_channels, uint32_t output_channels, std::string activation,
+        DataPtr inputs, DataPtr outputs = DataPtr())
+    {
+        ConfigMap config;
+        config.insert({"dim0", {input_channels}});
+        config.insert({"dim1", {output_channels}});
+        config.insert({"activation", {activation}});
+
+        auto weight = Eigen::Map<Matrix>(Weights, input_channels, output_channels);
+        auto offset = input_channels * output_channels;
+        auto bias = Eigen::Map<Matrix>(Weights + offset, 1, output_channels);
+
+        ParamMap param;
+        param.insert({"weight", {weight}});
+        param.insert({"bias",{Matrix::Ones(1,C)}});
+        Arm arm(config, param);
+
+        return make_node("Dense", arm, inputs, name, outputs);
+    }
+
+    int L=2000;
+    int C=256;
+
+    auto input_node=make_input("input");
+
+    auto weight = Matrix::Ones(C + 1, C);
+    SharedData shared;
+
+    auto dense_0 = make_dense(weight.data(), "dense-0", C, C, "tanh", input_node->output());
+    auto dense_1 = make_dense(weight.data(), "dense-1", C, C, "tanh", dense_0->output());
+    shared.put(dense_1->input());
+    auto dense_2 = make_dense(weight.data(), "dense-2", C, C, "tanh", dense_1->output(), shared.get(1));//share
+    shared.put(dense_2->input());
+    auto dense_3 = make_dense(weight.data(), "dense-3", C, C, "tanh", dense_2->output(), shared.get(1));//share
+    
+    /*
+    can also be
+    auto dense_0 = make_dense(weight.data(), "dense-0", C, C, "tanh", input_node->output());
+    shared.put(dense_0->input());
+    auto dense_1 = make_dense(weight.data(), "dense-1", C, C, "tanh", dense_0->output(), shared.get(1));//share
+    shared.put(dense_1->input());
+    auto dense_2 = make_dense(weight.data(), "dense-2", C, C, "tanh", dense_1->output(), shared.get(1));//share
+    shared.put(dense_2->input());
+    auto dense_3 = make_dense(weight.data(), "dense-3", C, C, "tanh", dense_2->output(), shared.get(1));//share
+    */
+
+    Matrix temp=Matrix::Identity(L,C);
+    input_node->feed(temp);
+
+    dense_0->run();
+    dense_1->run();
+    dense_2->run();
+    dense_3->run();
+
+    INFO<<dense_3->output(0)->get();
+
+```
 
 
 
