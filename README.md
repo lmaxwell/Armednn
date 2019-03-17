@@ -147,7 +147,7 @@ MKLROOT/include and MKLROOT/lib/intel64_lin should exist
 
 ### 1.4 share node memory by SharedData
 ```c++
-    std::unique_ptr<Node> make_dense(float* Weights, std::string name, 
+    std::unique_ptr<Node> make_dense(float* weights, std::string name, 
         uint32_t input_channels, uint32_t output_channels, std::string activation,
         DataPtr inputs, DataPtr outputs = DataPtr())
     {
@@ -156,9 +156,9 @@ MKLROOT/include and MKLROOT/lib/intel64_lin should exist
         config.insert({"dim1", {output_channels}});
         config.insert({"activation", {activation}});
 
-        auto weight = Eigen::Map<Matrix>(Weights, input_channels, output_channels);
+        auto weight = Eigen::Map<Matrix>(weights, input_channels, output_channels);
         auto offset = input_channels * output_channels;
-        auto bias = Eigen::Map<Matrix>(Weights + offset, 1, output_channels);
+        auto bias = Eigen::Map<Matrix>(weights + offset, 1, output_channels);
 
         ParamMap param;
         param.insert({"weight", {weight}});
