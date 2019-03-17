@@ -13,6 +13,13 @@ exes:=$(objs:.o=)
 libpath:=$(shell pwd)/../lib
 ldflags:=-L$(libpath) -larmednn
 
+ifneq ($(MKLROOT),)
+	MKLLIBS:=-Wl,--start-group $(MKLROOT)/lib/intel64_lin/libmkl_intel_lp64.a \
+		$(MKLROOT)/lib/intel64_lin/libmkl_sequential.a \
+		$(MKLROOT)/lib/intel64_lin/libmkl_core.a -Wl,--end-group -lpthread -lm -ldl
+endif
+
+
 
 all: $(exes)
 
@@ -27,9 +34,9 @@ $(objs): bin/%.o: %.cpp $(libpath)/libarmednn.so $(libpath)/libarmednn.a
 $(exes): % : %.o 
 	@mkdir -p $(dir $@)
 ifeq ($(link),dynamic)
-	$(cxx)  $(ldflags) -Wl,-rpath $(libpath)  $*.o -o $@
+	$(cxx)  $(ldflags) -Wl,-rpath $(libpath) $(MKLLIBS) $*.o -o $@
 else
-	$(cxx)   -Wl,--whole-archive $(libpath)/libarmednn.a -Wl,--no-whole-archive  $*.o -o $@
+	$(cxx)   -Wl,--whole-archive $(libpath)/libarmednn.a -Wl,--no-whole-archive $(MKLLIBS) $*.o -o $@
 endif
 
 
