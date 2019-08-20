@@ -1,12 +1,20 @@
 ## Introduction
 
-modular neural network inference engine
+a small ande efficient modular neural network inference engine
 
 ### features
-. warmup
-. node memory share 
-. operator registry
-. cross-platform 
+* memory reuse
+* memory share 
+* cross-platform 
+
+
+### operators implemented
+* Concat
+* Split
+* Dense(Full connected)
+* Conv1D
+* LSTM
+
 
 
 ## INSTALL
