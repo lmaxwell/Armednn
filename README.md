@@ -2,7 +2,9 @@
 
 a small ande efficient modular neural network inference engine
 
+
 ### features
+* stateless/stateful node
 * memory reuse
 * memory share 
 * cross-platform 
