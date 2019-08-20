@@ -1,3 +1,14 @@
+## Introduction
+
+modular neural network inference engine
+
+### features
+. warmup
+. node memory share 
+. operator registry
+. cross-platform 
+
+
 ## INSTALL
 
 ```
