@@ -1,6 +1,6 @@
 ## Introduction
 
-a small ande efficient modular neural network inference engine
+a small and efficient modular neural network inference engine
 
 
 ### features
