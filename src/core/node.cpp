@@ -38,49 +38,6 @@ uint32_t Data::id()
     return _id;
 }
 
-std::shared_ptr<Data> SharedData::get()
-{
-    std::shared_ptr<Data> result = nullptr;
-    if(shared.size()>0)
-    {
-        result = shared[shared.size() - 1];
-        shared.pop_back();
-    }
-    else
-    {
-        result = std::shared_ptr<Data>(new Data);
-    }
-    return result;
-}
-
-DataPtr SharedData::get(uint32_t num_Data)
-{
-    DataPtr outputs;
-    for(uint i = 0; i < num_Data; i++)
-    {
-        outputs.push_back(get());
-    }
-    return outputs;
-}
-
-void SharedData::put(std::shared_ptr<Data> data)
-{
-    if(shared.end() == std::find(shared.begin(), shared.end(), data))
-    {
-        shared.push_back(data);
-    }
-}
-
-void SharedData::put(DataPtr dataptr)
-{
-    for(uint32_t i = 0; i < dataptr.size(); i++)
-    {
-        if(shared.end() == std::find(shared.begin(), shared.end(), dataptr[i]))
-        {
-            shared.push_back(dataptr[i]);
-        }
-    }
-}
 
 
 Arm::Arm(ConfigMap& config, ParamMap& param):_config(config),_param(param){

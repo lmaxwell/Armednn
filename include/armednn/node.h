@@ -43,20 +43,6 @@ struct Data
 
 typedef std::vector<std::shared_ptr<Data>> DataPtr;
 
-class SharedData
-{
-public:
-    std::shared_ptr<Data> get();
-
-    DataPtr get(uint32_t num_Data);
-
-    void put(std::shared_ptr<Data> data);
-
-    void put(DataPtr dataptr);
-
-private:
-    DataPtr shared;
-};
 
 
 struct Arm
